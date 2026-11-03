@@ -7,3 +7,7 @@ requests==2.31.0
 ollama==0.1.0
 anthropic==0.32.0
 openai==1.40.0
+langgraph==0.2.60
+langgraph-checkpoint-sqlite==2.0.1
+aiosqlite==0.20.0
+pytest==8.2.0
