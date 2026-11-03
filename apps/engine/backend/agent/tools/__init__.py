@@ -1,10 +1,11 @@
-"""Agent tool registry stub."""
+"""Agent tool registry.
 
-from agent.tools.window_tools import WindowTools
-from agent.tools.web_tools import WebTools
+``registry.py`` holds the canonical ToolRegistry: versioned tool entries,
+typed input schemas, and proposal validation (docs/AI-Core/02).
+``window_tools`` / ``web_tools`` are the legacy pre-AI-Core stubs and stay
+importable until they are migrated behind the gateway.
+"""
 
+from agent.tools.registry import ToolEntry, ToolRegistry
 
-class ToolRegistry:
-    def __init__(self) -> None:
-        self.window = WindowTools()
-        self.web = WebTools()
+__all__ = ["ToolEntry", "ToolRegistry"]
