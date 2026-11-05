@@ -35,14 +35,15 @@ current_run_id: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
     "nexus_current_run_id", default=None
 )
 
-UiMapping = Callable[[dict[str, Any]], tuple[UiAction, dict[str, Any]]]
+# tool args -> (action, app_id, data)
+UiMapping = Callable[[dict[str, Any]], tuple[UiAction, Optional[str], dict[str, Any]]]
 
 # native_command_id (tool registry) -> ui.command. To make another tool
 # UI-backed: register it with a native_command_id in agent/tools/registry.py
 # and add one line here.
 NATIVE_TO_UI: dict[str, UiMapping] = {
     "desktop.open_application": lambda args: (
-        UiAction.open_app, {"app_id": args["application_id"]}
+        UiAction.open_app, args["application_id"], {}
     ),
 }
 
@@ -70,14 +71,15 @@ class UiCommandBridge:
         if session_id is None or mapping is None or not self._hub.is_connected(session_id):
             return await self._fallback.invoke_native_command(native_command_id, payload)
 
-        action, data = mapping(payload)
+        action, app_id, data = mapping(payload)
         command_id = f"cmd_{uuid4().hex[:12]}"
         ack = self._hub.expect_ack(command_id)
         try:
             self._hub.publish(
                 session_id,
                 EventType.ui_command,
-                {"command_id": command_id, "action": action.value, **data},
+                {"command_id": command_id, "action": action.value,
+                 "app_id": app_id, "data": data},
                 run_id=current_run_id.get(),
             )
             reply = await asyncio.wait_for(ack, timeout=self._ack_timeout)

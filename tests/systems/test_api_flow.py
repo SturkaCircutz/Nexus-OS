@@ -102,18 +102,23 @@ def test_fast_run_streams_full_lifecycle(client):
     assert {event["run_id"] for event in events} == {run_id}
     assert {event["session_id"] for event in events} == {SESSION}
     types = [event["type"] for event in events]
-    assert types[0] == "agent.state" and events[0]["data"]["state"] == "thinking"
+    assert types[0] == "agent.state" and events[0]["data"] == {"state": "listening"}
     states = [e["data"]["state"] for e in events if e["type"] == "agent.state"]
-    assert "acting" in states and states[-1] == "speaking"
+    assert states[:2] == ["listening", "thinking"]
+    assert "acting" in states and states[-2:] == ["speaking", "idle"]
     progress = [e["data"] for e in events if e["type"] == "task.progress"]
-    assert progress and progress[0]["status"] == "completed"
+    assert progress and progress[0]["status"] == "done"
+    assert set(progress[0]) == {"task_id", "tool_id", "status"}
+    assert progress[0]["tool_id"] == "system_diagnostics"
     response = next(e["data"] for e in events if e["type"] == "run.response")
-    assert "diagnostics" in response["text"].lower() and response["route"] == "fast_direct"
+    assert set(response) == {"speech", "widgets"} and response["widgets"] == []
+    assert "diagnostics" in response["speech"].lower()
     assert types.index("run.response") < types.index("run.completed")
-    assert events[-1]["data"]["status"] == "completed"
+    assert events[-1]["data"] == {"status": "ok"}
 
     view = client.get(f"/api/v1/agent/runs/{run_id}").json()
     assert view["status"] == "completed" and view["source"] == "voice"
+    assert view["route"] == "fast_direct"
     assert view["request_ids"] == [run_id] and view["interrupt"] is None
 
 
@@ -124,7 +129,8 @@ def test_clarify_pauses_then_continues_the_same_run(client, runtime):
         interrupt = events[-1]["data"]
         assert interrupt["kind"] == "clarify"
         assert "Which application" in interrupt["message"]
-        assert events[-2]["data"] == {"state": "waiting", "kind": "clarify"}
+        assert set(interrupt) == {"kind", "message", "options"}
+        assert events[-2]["data"] == {"state": "waiting"}
         assert client.get(f"/api/v1/agent/runs/{run_id}").json()["status"] == "awaiting_input"
 
         resumed = client.post(f"/api/v1/agent/runs/{run_id}/resume",
@@ -133,7 +139,7 @@ def test_clarify_pauses_then_continues_the_same_run(client, runtime):
         events = _until(ws, _is("run.completed"))
 
     assert {event["run_id"] for event in events} == {run_id}
-    assert events[-1]["data"]["status"] == "completed"
+    assert events[-1]["data"] == {"status": "ok"}
     view = client.get(f"/api/v1/agent/runs/{run_id}").json()
     assert len(view["request_ids"]) == 2
     child = runtime.engine.envelope_for(view["request_ids"][1])
@@ -146,14 +152,16 @@ def test_confirm_then_ui_command_round_trip(client, runtime):
         events = _until(ws, _is("run.interrupt"))
         interrupt = events[-1]["data"]
         assert interrupt["kind"] == "confirm" and interrupt["options"] == ["yes", "no"]
-        assert interrupt["approval_id"] and interrupt["expires_at"]
+        assert set(interrupt) == {"kind", "message", "options"}
 
         client.post(f"/api/v1/agent/runs/{run_id}/resume", json={"resume": "yes"})
         events = _until(ws, _is("ui.command"))
         command = events[-1]
         assert command["run_id"] == run_id
+        assert set(command["data"]) == {"command_id", "action", "app_id", "data"}
         assert command["data"]["action"] == "open_app"
         assert command["data"]["app_id"] == "browser"
+        assert command["data"]["data"] == {}
 
         ws.send_json({
             "type": "ui.command.ack", "session_id": SESSION, "run_id": run_id,
@@ -162,7 +170,7 @@ def test_confirm_then_ui_command_round_trip(client, runtime):
         })
         events = _until(ws, _is("run.completed"))
 
-    assert events[-1]["data"]["status"] == "completed"
+    assert events[-1]["data"] == {"status": "ok"}
     receipts = _receipt_statuses(runtime, run_id)
     assert receipts and receipts[-1]["receipt_status"] == "succeeded"
     observed = [o for o in _observations(runtime, run_id) if o.get("output")]
@@ -222,11 +230,13 @@ def test_without_a_socket_native_work_fails_closed(client, runtime):
 def test_cancel_while_waiting_rejects_the_approval(client, runtime):
     with _socket(client) as ws:
         run_id = _start(client, "open browser")
-        approval_id = _until(ws, _is("run.interrupt"))[-1]["data"]["approval_id"]
+        _until(ws, _is("run.interrupt"))
+        approval_id = runtime.runs.get(run_id).approval_id
+        assert approval_id
         cancelled = client.post(f"/api/v1/agent/runs/{run_id}/cancel")
         assert cancelled.status_code == 200 and cancelled.json()["status"] == "cancelled"
         events = _until(ws, _is("run.completed"))
-    assert events[-1]["data"]["status"] == "cancelled"
+    assert events[-1]["data"] == {"status": "cancelled"}
     assert runtime.engine.repos.approvals.get(approval_id)["status"] == "rejected"
     assert runtime.engine.repos.requests.get(run_id)["status"] == "cancelled"
 
@@ -334,9 +344,9 @@ def test_cancel_stops_a_running_run(client, runtime, monkeypatch):
     monkeypatch.setattr(runtime.engine, "handle_request", slow_request)
     with _socket(client) as ws:
         run_id = _start(client, "run system diagnostics")
-        _until(ws, lambda m: m["type"] == "agent.state")
+        _poll(client, run_id, {"running"})
         cancelled = client.post(f"/api/v1/agent/runs/{run_id}/cancel")
         assert cancelled.status_code == 200 and cancelled.json()["status"] == "cancelled"
         events = _until(ws, _is("run.completed"))
-    assert events[-1]["data"] == {"status": "cancelled", "errors": []}
-    assert events[-2]["data"]["state"] == "idle"
+    assert events[-1]["data"] == {"status": "cancelled"}
+    assert client.get(f"/api/v1/agent/runs/{run_id}").json()["agent_state"] == "idle"

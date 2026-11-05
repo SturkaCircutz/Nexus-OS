@@ -63,9 +63,9 @@ describe('engineClient', () => {
   it('applies a ui.command and acks it with the handler result', async () => {
     const onUiCommand = vi.fn(() => ({ ok: true, wmState: { apps: [], focused_app_id: 'browser' } }))
     const { socket } = setup({ onUiCommand })
-    socket.receive({ type: 'ui.command', session_id: SESSION, run_id: 'r1', ts: 'now', data: { command_id: 'cmd_1', action: 'open_app', app_id: 'browser' } })
+    socket.receive({ type: 'ui.command', session_id: SESSION, run_id: 'r1', ts: 'now', data: { command_id: 'cmd_1', action: 'open_app', app_id: 'browser', data: {} } })
     await vi.waitFor(() => expect(socket.sent).toHaveLength(1))
-    expect(onUiCommand).toHaveBeenCalledWith({ command_id: 'cmd_1', action: 'open_app', app_id: 'browser' })
+    expect(onUiCommand).toHaveBeenCalledWith({ command_id: 'cmd_1', action: 'open_app', app_id: 'browser', data: {} })
     expect(socket.sent[0]).toMatchObject({
       type: 'ui.command.ack',
       session_id: SESSION,
@@ -76,7 +76,7 @@ describe('engineClient', () => {
 
   it('acks ok:false when no handler is set', async () => {
     const { socket } = setup()
-    socket.receive({ type: 'ui.command', session_id: SESSION, run_id: 'r1', ts: 'now', data: { command_id: 'cmd_2', action: 'open_app' } })
+    socket.receive({ type: 'ui.command', session_id: SESSION, run_id: 'r1', ts: 'now', data: { command_id: 'cmd_2', action: 'open_app', app_id: null, data: {} } })
     await vi.waitFor(() => expect(socket.sent).toHaveLength(1))
     expect(socket.sent[0].data).toMatchObject({ command_id: 'cmd_2', ok: false })
   })

@@ -1,6 +1,8 @@
 # 07 - API flow (shell ⇄ engine)
 
 > **Status key:** endpoints, event names and payloads below are **Implemented** in `apps/engine/backend/api/` and covered by `tests/systems/test_api_flow.py`. Items marked **Open decision** still need a team call.
+>
+> **Source of truth:** the team diagram `agent-langgraph.excalidraw` ("API FLOW" section). Payloads and enum values here follow it exactly; where the engine differs underneath, that is listed in "Known limits".
 
 This page is the contract between the React shell (and voice) and the Python engine. It sits *in front of* the main graph from [03 - How it works](03-how-it-works.md); it does not change routing, policy, or the gateway. It adds three things:
 
@@ -20,7 +22,7 @@ shell ══WS═══▶ ui.command.ack, wm.state
 - WebSocket event types: lowercase `dot.case` (`agent.state`, `ui.command.ack`).
 - IDs: `session_id` (UUID, one per desktop session), `run_id`, `request_id`, `task_id`, `command_id`, `approval_id`, `app_id`.
 - Errors everywhere: `{"error": {"code": "...", "message": "...", "details": {}}}`. Codes are the C-contract `ErrorCode` values plus `NOT_FOUND`, `CONFLICT`, `ENGINE_FAILURE` at the API layer.
-- Avatar anchors use the shell's spelling: `top-left`, `top-center`, `top-right`, `center`, `bottom-left`, `bottom-center`, `bottom-right`.
+- Avatar positions on the wire: `top_left`, `top_center`, `top_right`, `center`, `bottom_left`, `bottom_center`, `bottom_right`. The shell's `anchors.ts` uses hyphens (`top-left`), so convert at the edge.
 - Source of truth: Python `api/events.py`, mirrored in TypeScript `apps/shell/frontend/src/types/agentEvents.ts`. Change both in one PR.
 
 ## REST endpoints
@@ -59,12 +61,12 @@ Events only go to sockets of the same `session_id`. If no socket is open, events
 
 | type | data | When |
 |---|---|---|
-| `agent.state` | `{state, node?, kind?, decision?}` | Avatar state changes (deduplicated) |
-| `task.progress` | `{task_id, agent, status, summary, error}` | A task finished (C9 `AgentResult`) |
-| `ui.command` | `{command_id, action, app_id?, …}` | An approved native tool needs the shell. **Must be acked.** |
-| `run.interrupt` | `{kind: "confirm"\|"clarify", message, options, approval_id?, expires_at?}` | The run is paused for the user |
-| `run.response` | `{text, evidence_refs, route}` | Final answer (speak it, show it) |
-| `run.completed` | `{status: "completed"\|"failed"\|"cancelled", errors}` | Always the last event of a run |
+| `agent.state` | `{state}` | Avatar state changes (deduplicated) |
+| `task.progress` | `{task_id, tool_id, status}` | A task finished. `tool_id` is `null` for a task that called no tool. |
+| `ui.command` | `{command_id, action, app_id, data}` | An approved native tool needs the shell. **Must be acked.** |
+| `run.interrupt` | `{kind: "confirm"\|"clarify", message, options}` | The run is paused for the user |
+| `run.response` | `{speech, widgets[]}` | Final answer (speak it, show it). `widgets` is `[]` until tools produce them. |
+| `run.completed` | `{status: "ok"\|"failed"\|"cancelled"}` | Always the last event of a run. Details: `GET /agent/runs/{run_id}`. |
 | `run.error` | `{error: {code, message, details}}` | Run failed, or *this socket* sent a bad message |
 
 ### Shell → server
@@ -79,12 +81,14 @@ Events only go to sockets of the same `session_id`. If no socket is open, events
 | Name | Values |
 |---|---|
 | `agent.state` | `idle`, `listening`, `thinking`, `acting`, `waiting`, `speaking`, `error` |
-| run `status` | `received`, `running`, `awaiting_input`, `completed`, `failed`, `cancelled` |
 | `source` | `voice`, `text`, `ui` |
 | interrupt `kind` | `confirm`, `clarify` |
-| `ui.command` `action` | `open_app`, `close_app`, `move_window`, `resize_window`, `set_window_mode`, `set_avatar_anchor` (names follow `modules/ipc` IPCCommand) |
+| task `status` | `queued`, `running`, `done`, `failed`, `skipped` (only `done`/`failed`/`skipped` are emitted today) |
+| `run.completed` `status` | `ok`, `failed`, `cancelled` |
+| `ui.command` `action` | `open_app`, `close_app`, `focus`, `move`, `resize`, `minimize`, `maximize`, `restore`, `snap`, `set_avatar_position` |
+| avatar position | `top_left`, `top_center`, `top_right`, `center`, `bottom_left`, `bottom_center`, `bottom_right` |
 
-Run `status` is API-level. The engine's request statuses (doc 02 vocabulary) are unchanged underneath, and a run's `request_ids` point at them.
+REST run `status` (`GET /agent/runs/{run_id}`) is `received`, `running`, `awaiting_input`, `completed`, `failed`, `cancelled`. It is API-level; the engine's request statuses (doc 02 vocabulary) are unchanged underneath, and a run's `request_ids` point at them. C9 task results map to task `status` as `completed` → `done`, `failed` → `failed`, `blocked` → `skipped`.
 
 ## Avatar mapping
 
@@ -93,12 +97,13 @@ Run `status` is API-level. The engine's request statuses (doc 02 vocabulary) are
 | Graph moment | `agent.state` |
 |---|---|
 | mic open (shell-side, no event) | `listening` |
-| `ingest_build_context`, `choose_route`, `clarify`, `supervisor_plan`, `validate_plan`, `bounded_replan`, `synthesize_outcome` | `thinking` |
-| `fast_direct_task`, `dispatch_ready_tasks`, approved resume | `acting` |
-| `run.interrupt` pending | `waiting` |
-| `run.response` sent | `speaking`; the shell returns to `idle` when playback ends |
+| `ingest_build_context` (diagram: ingest) | `listening` |
+| `choose_route`, `clarify`, `supervisor_plan`, `validate_plan`, `bounded_replan`, `synthesize_outcome` (route / plan) | `thinking` |
+| `fast_direct_task`, `dispatch_ready_tasks`, approved resume (execute_tool) | `acting` |
+| `run.interrupt` pending (confirm / clarify) | `waiting` |
+| after `run.response` (respond) | `speaking` → `idle`, then `run.completed` |
 | run failed | `error` |
-| run cancelled | `idle` |
+| run cancelled (END) | `idle` |
 
 The shell's avatar art currently has `idle/listening/thinking/speaking/error`. Until new frames exist, render `acting` and `waiting` as `thinking`.
 
@@ -115,18 +120,16 @@ sequenceDiagram
   UI->>API: POST /agent/runs {session_id:S, text, source:"voice"}
   API-->>UI: 202 {run_id:R}
   API->>G: handle_request (streamed)
-  API-->>UI: agent.state thinking → acting
+  API-->>UI: agent.state listening → thinking → acting
   G-->>API: needs approval (reversible_write)
   API-->>UI: agent.state waiting · run.interrupt {kind:"confirm", approval_id}
   UI->>API: POST /agent/runs/R/resume {resume:"yes"}
   API->>G: resume_after_decision(approved)
   G->>API: gateway → UiCommandBridge
-  API-->>UI: ui.command {command_id, action:"open_app", app_id:"browser"}
+  API-->>UI: ui.command {command_id, action:"open_app", app_id:"browser", data:{}}
   UI->>API: ui.command.ack {command_id, ok:true, wm_state}
-  API-->>UI: run.response {text} · agent.state speaking · run.completed {status:"completed"}
+  API-->>UI: run.response {speech, widgets} · agent.state speaking → idle · run.completed {status:"ok"}
 ```
-
-This is the exact event sequence the real server emits for this request (verified against a running `python main.py`).
 
 ## `ui.command` and receipts
 
@@ -144,7 +147,7 @@ The shell must therefore ack **every** `ui.command`, including refusals. `engine
 ### Making another tool UI-backed
 
 1. Register it in `agent/tools/registry.py` with a `native_command_id` (risk, targets and idempotency as usual).
-2. Add one line to `NATIVE_TO_UI` in `api/ui_bridge.py` that maps the tool args to a `UiAction` plus data.
+2. Add one line to `NATIVE_TO_UI` in `api/ui_bridge.py` that maps the tool args to `(UiAction, app_id, data)`.
 3. Handle that `action` in the shell's `onUiCommand` handler.
 4. Add a test next to `test_confirm_then_ui_command_round_trip`.
 
@@ -156,7 +159,7 @@ The shell must therefore ack **every** `ui.command`, including refusals. `engine
 - `onEvent`:
   - `agent.state` sets the avatar status.
   - `run.interrupt` shows a confirm or clarify bubble.
-  - `run.response` is passed to `say()` (and to TTS).
+  - `run.response.speech` is passed to `say()` (and to TTS); `widgets` render in the panel.
   - `run.error` shows the error bubble.
 - `onUiCommand`: map `open_app`, `close_app`, etc. to the existing `DesktopStore` methods and return `{ok, wmState}`.
 - Call `pushWmState()` from the desktop store subscription.
@@ -169,10 +172,15 @@ The shell must therefore ack **every** `ui.command`, including refusals. `engine
 | `GET/PUT /api/v1/wm/layout` (restore/save layout) | Window manager | Today `sessionPersistence.ts` covers it client-side |
 | `POST /api/v1/voice/tts` (Piper) | Voice | STT stays in the browser and sends text to `/agent/runs` |
 | `POST /api/v1/web/search`, `/web/browse` | Web search | Register them as tools too, so the agent can call them |
+| `GET/POST /api/v1/files…` | Layout | |
 
 ## Known limits / open decisions
 
 - **Open decision:** runs are kept in memory (the last 200 finished runs). Engine requests, tasks, approvals and receipts are already durable in SQLite. Persist runs only if the shell needs history across restarts.
 - **Open decision:** a clarify answer is treated as the new full instruction ("open browser"), not as a fragment ("browser"). The shell should prefill the original text in the clarify bubble.
 - Cancelling mid-execution can leave an execution started without a receipt. The gateway reports it as `unknown_outcome` on the next attempt, which is the intended reconcile path (doc 03 §7).
-- `run.response.text` is the engine's synthesized summary. With `NEXUS_MODEL_PROVIDER=none` it is deterministic and terse, so a model provider or a response template should shape it before TTS.
+- **Not yet implemented (Agent-owned in the diagram):** `POST /api/v1/tools/{tool_id}/invoke` and `PATCH /api/v1/tools/{tool_id}`.
+- **Engine differs from the diagram's MAIN GRAPH:** the engine's 12 nodes do not use `Send` fan-out, `interrupt()`/`Command(resume=…)`, or `thread_id = session_id`. Confirm goes through the C5 approval service, and a clarify answer starts a child request (`parent_request_id`). The wire contract above is the same either way.
+- `session_id` must be a UUID (C1 contract), not a short id like the diagram's `s_8f2c` example.
+- Tool ids are flat (`open_application`), not the diagram's `module.action` form.
+- `run.response.speech` is the engine's synthesized summary. With `NEXUS_MODEL_PROVIDER=none` it is deterministic and terse, so a model provider or a response template should shape it before TTS.

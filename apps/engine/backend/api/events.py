@@ -67,22 +67,50 @@ class InterruptKind(str, Enum):
 
 
 class UiAction(str, Enum):
-    """``ui.command`` actions. Names follow ``modules/ipc/contract.ts``
-    (IPCCommand) so the shell can route both transports to one handler."""
+    """``ui.command`` actions (agent-langgraph diagram, FIXED VALUES)."""
 
     open_app = "open_app"
     close_app = "close_app"
-    move_window = "move_window"
-    resize_window = "resize_window"
-    set_window_mode = "set_window_mode"
-    set_avatar_anchor = "set_avatar_anchor"
+    focus = "focus"
+    move = "move"
+    resize = "resize"
+    minimize = "minimize"
+    maximize = "maximize"
+    restore = "restore"
+    snap = "snap"
+    set_avatar_position = "set_avatar_position"
 
 
-# Same spelling as apps/shell/frontend/src/shell/agent/anchors.ts
-AVATAR_ANCHORS = (
-    "top-left", "top-center", "top-right", "center",
-    "bottom-left", "bottom-center", "bottom-right",
+class TaskStatus(str, Enum):
+    """``task.progress`` status (agent-langgraph diagram, FIXED VALUES)."""
+
+    queued = "queued"
+    running = "running"
+    done = "done"
+    failed = "failed"
+    skipped = "skipped"
+
+
+class RunOutcome(str, Enum):
+    """``run.completed`` status."""
+
+    ok = "ok"
+    failed = "failed"
+    cancelled = "cancelled"
+
+
+AVATAR_POSITIONS = (
+    "top_left", "top_center", "top_right", "center",
+    "bottom_left", "bottom_center", "bottom_right",
 )
+
+# C9 AgentResult.status -> task.progress status. ``needs_input`` is not a
+# progress event: the run.interrupt that follows it carries the pause.
+RESULT_TASK_STATUS: dict[str, TaskStatus] = {
+    "completed": TaskStatus.done,
+    "failed": TaskStatus.failed,
+    "blocked": TaskStatus.skipped,
+}
 
 
 class WsEnvelope(BaseModel):
@@ -100,11 +128,12 @@ class WsEnvelope(BaseModel):
         return self.model_dump(mode="json")
 
 
-# Main-graph node -> avatar state while that node runs. Nodes not listed
-# keep the current state. Node names are the canonical vocabulary in
-# agent/graphs/main_graph.py.
+# Main-graph node -> avatar state while that node runs (diagram "Avatar
+# mapping": ingest -> listening, route/plan -> thinking, execute -> acting).
+# Nodes not listed keep the current state. Node names are the canonical
+# vocabulary in agent/graphs/main_graph.py.
 NODE_AGENT_STATE: dict[str, AgentState] = {
-    "ingest_build_context": AgentState.thinking,
+    "ingest_build_context": AgentState.listening,
     "choose_route": AgentState.thinking,
     "clarify": AgentState.thinking,
     "supervisor_plan": AgentState.thinking,

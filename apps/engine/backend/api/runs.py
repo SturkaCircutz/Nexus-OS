@@ -23,9 +23,11 @@ from agent.core import CoreEngine, CoreRequestResult
 from api.events import (
     NODE_AGENT_STATE,
     RESULT_NODES,
+    RESULT_TASK_STATUS,
     AgentState,
     EventType,
     InterruptKind,
+    RunOutcome,
     Source,
     api_error,
 )
@@ -57,7 +59,8 @@ class RunRecord:
     route: Optional[str] = None
     request_ids: list[str] = field(default_factory=list)
     response: Optional[dict[str, Any]] = None
-    interrupt: Optional[dict[str, Any]] = None
+    interrupt: Optional[dict[str, Any]] = None  # wire shape {kind, message, options}
+    approval_id: Optional[str] = field(default=None, repr=False)  # server-side only
     errors: list[dict[str, Any]] = field(default_factory=list)
     created_at: str = field(default_factory=utc_now_iso)
     updated_at: str = field(default_factory=utc_now_iso)
@@ -126,7 +129,7 @@ class RunManager:
         interrupt = record.interrupt
         if interrupt["kind"] == InterruptKind.confirm.value:
             decision = _decision(answer)
-            work = self._execute_confirm(record, interrupt["approval_id"], decision)
+            work = self._execute_confirm(record, record.approval_id, decision)
         else:
             text = str(answer or "").strip()
             if not text:
@@ -139,6 +142,7 @@ class RunManager:
             })
             work = self._execute_request(record, envelope)
         record.interrupt = None
+        record.approval_id = None
         self._touch(record, status="running")
         self._spawn(record, work)
         return record
@@ -154,9 +158,8 @@ class RunManager:
             return record
         # Paused on an interrupt: close the pending approval so it cannot be
         # approved later from another surface.
-        interrupt = record.interrupt or {}
-        if interrupt.get("approval_id"):
-            self._engine.approver.decide(interrupt["approval_id"], "rejected",
+        if record.approval_id:
+            self._engine.approver.decide(record.approval_id, "rejected",
                                          record.session_id)
         self._finish_cancelled(record)
         return record
@@ -183,7 +186,6 @@ class RunManager:
             await self._engine.ensure_main_graph()
         record.request_ids.append(envelope.request_id)
         self._touch(record, status="running")
-        self._set_state(record, AgentState.thinking, node="received")
         result = await self._engine.handle_request(
             envelope, on_graph_event=self._graph_observer(record)
         )
@@ -191,7 +193,7 @@ class RunManager:
 
     async def _execute_confirm(self, record: RunRecord, approval_id: str, decision: str) -> None:
         self._set_state(record, AgentState.acting if decision == "approved"
-                        else AgentState.thinking, decision=decision)
+                        else AgentState.thinking)
         result = await self._engine.resume_after_decision(
             approval_id, decision, record.session_id
         )
@@ -203,10 +205,12 @@ class RunManager:
             if kind == "node_started":
                 state = NODE_AGENT_STATE.get(node)
                 if state is not None:
-                    self._set_state(record, state, node=node)
+                    self._set_state(record, state)
             elif kind == "node_finished" and node in RESULT_NODES:
                 for result in (update or {}).get("results") or []:
-                    self._publish(record, EventType.task_progress, _task_progress(result))
+                    progress = self._task_progress(record, result)
+                    if progress is not None:
+                        self._publish(record, EventType.task_progress, progress)
         return observe
 
     # ------------------------------------------------------------------
@@ -218,12 +222,11 @@ class RunManager:
         record.errors = [error.model_dump(mode="json") for error in result.errors]
         if result.pending_approval is not None:
             approval = result.pending_approval
+            record.approval_id = approval["approval_id"]
             self._pause(record, {
                 "kind": InterruptKind.confirm.value,
                 "message": approval["summary"],
                 "options": ["yes", "no"],
-                "approval_id": approval["approval_id"],
-                "expires_at": approval["expires_at"],
             })
         elif result.route == "clarify" and result.status == "completed":
             self._pause(record, {
@@ -241,38 +244,38 @@ class RunManager:
     def _pause(self, record: RunRecord, interrupt: dict[str, Any]) -> None:
         record.interrupt = interrupt
         self._touch(record, status="awaiting_input")
-        self._set_state(record, AgentState.waiting, kind=interrupt["kind"])
+        self._set_state(record, AgentState.waiting)
         self._publish(record, EventType.run_interrupt, interrupt)
 
     def _complete(self, record: RunRecord, result: CoreRequestResult) -> None:
-        record.response = {"text": result.response_text,
-                           "evidence_refs": list(result.evidence_refs)}
+        # The engine has no widget producers yet; web/tool results will add them.
+        record.response = {"speech": result.response_text, "widgets": []}
         self._touch(record, status="completed")
-        self._publish(record, EventType.run_response,
-                      {**record.response, "route": record.route})
-        # The shell plays the speech and returns the avatar to idle itself.
-        self._set_state(record, AgentState.speaking if result.response_text
-                        else AgentState.idle)
-        self._publish(record, EventType.run_completed,
-                      {"status": "completed", "errors": record.errors})
+        self._publish(record, EventType.run_response, dict(record.response))
+        # Diagram step 22: speaking -> idle (the shell times it to playback).
+        if result.response_text:
+            self._set_state(record, AgentState.speaking)
+        self._set_state(record, AgentState.idle)
+        self._publish(record, EventType.run_completed, {"status": RunOutcome.ok.value})
 
     def _fail(self, record: RunRecord, code: str, message: str) -> None:
         self._touch(record, status="failed")
         self._publish(record, EventType.run_error, api_error(code, message))
+        if not record.errors:
+            record.errors = [api_error(code, message)["error"]]
         self._set_state(record, AgentState.error)
-        self._publish(record, EventType.run_completed,
-                      {"status": "failed", "errors": record.errors
-                       or [api_error(code, message)["error"]]})
+        self._publish(record, EventType.run_completed, {"status": RunOutcome.failed.value})
 
     def _finish_cancelled(self, record: RunRecord) -> None:
         if record.status in TERMINAL:
             return
         record.interrupt = None
+        record.approval_id = None
         self._touch(record, status="cancelled")
         if record.request_ids:
             self._engine.repos.requests.set_status(record.request_ids[-1], "cancelled")
         self._set_state(record, AgentState.idle)
-        self._publish(record, EventType.run_completed, {"status": "cancelled", "errors": []})
+        self._publish(record, EventType.run_completed, {"status": RunOutcome.cancelled.value})
 
     # ------------------------------------------------------------------
     # Small helpers
@@ -281,11 +284,26 @@ class RunManager:
     def _publish(self, record: RunRecord, event_type: EventType, data: dict[str, Any]) -> None:
         self._hub.publish(record.session_id, event_type, data, run_id=record.run_id)
 
-    def _set_state(self, record: RunRecord, state: AgentState, **data: Any) -> None:
+    def _set_state(self, record: RunRecord, state: AgentState) -> None:
         if record.agent_state == state.value:
             return
         record.agent_state = state.value
-        self._publish(record, EventType.agent_state, {"state": state.value, **data})
+        self._publish(record, EventType.agent_state, {"state": state.value})
+
+    def _task_progress(self, record: RunRecord, result: Any) -> Optional[dict[str, Any]]:
+        """C9 AgentResult -> ``task.progress {task_id, tool_id, status}``.
+        ``tool_id`` is the tool the task proposed (None if it called none)."""
+        data = result.model_dump(mode="json") if hasattr(result, "model_dump") else dict(result)
+        status = RESULT_TASK_STATUS.get(str(data.get("status")))
+        if status is None:
+            return None
+        task_id = data.get("task_id")
+        tool_id = None
+        if record.request_ids:
+            for row in self._engine.repos.proposals.list_for_request(record.request_ids[-1]):
+                if row["task_id"] == task_id:
+                    tool_id = row["tool_id"]
+        return {"task_id": task_id, "tool_id": tool_id, "status": status.value}
 
     @staticmethod
     def _touch(record: RunRecord, status: str) -> None:
@@ -314,13 +332,3 @@ def _decision(answer: Any) -> str:
         return "rejected"
     raise ValueError("a confirm answer must be yes or no")
 
-
-def _task_progress(result: Any) -> dict[str, Any]:
-    data = result.model_dump(mode="json") if hasattr(result, "model_dump") else dict(result)
-    return {
-        "task_id": data.get("task_id"),
-        "agent": data.get("agent"),
-        "status": data.get("status"),
-        "summary": data.get("summary"),
-        "error": data.get("error"),
-    }
