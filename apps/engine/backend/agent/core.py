@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Awaitable, Callable, Optional
 from uuid import uuid4
 
 from agent.execution.adapters import ADAPTERS, AdapterContext
@@ -39,6 +39,10 @@ from schemas.contracts import (
     ToolProposal,
     utc_now_iso,
 )
+
+
+GraphEventCallback = Callable[[str, str, Optional[dict[str, Any]]], Awaitable[None]]
+"""``(kind, node_name, update)`` - kind is ``node_started`` or ``node_finished``."""
 
 
 @dataclass
@@ -76,7 +80,14 @@ class CoreRequestResult:
 class CoreEngine:
     """Owns contracts, execution core, memory, and the main graph."""
 
-    def __init__(self, settings: Optional[EngineSettings] = None) -> None:
+    def __init__(
+        self,
+        settings: Optional[EngineSettings] = None,
+        desktop_bridge: Optional[Any] = None,
+    ) -> None:
+        """``desktop_bridge`` lets the server inject the live UI transport
+        (``api.ui_bridge.UiCommandBridge``). It must expose
+        ``invoke_native_command``; the default fails closed."""
         self.settings = settings or load_settings()
         self.session_manager = SessionManager(
             self.settings.database_url, self.settings.storage_schema_path
@@ -88,7 +99,7 @@ class CoreEngine:
         self.policy = Policy(self.registry, self.settings, approval_service=self.approver)
         self.gateway = ExecutionGateway(
             self.registry, self.policy, self.repos, self.settings,
-            desktop_bridge=DesktopBridge(base_url=None),
+            desktop_bridge=desktop_bridge or DesktopBridge(base_url=None),
         )
         self.gateway.set_approval_service(self.approver)
         self.memory = MemoryService(self.repos, self.settings)
@@ -260,14 +271,30 @@ class CoreEngine:
     # Request handling
     # ------------------------------------------------------------------
 
-    async def handle_request(self, envelope: RequestEnvelope) -> CoreRequestResult:
+    async def handle_request(
+        self,
+        envelope: RequestEnvelope,
+        on_graph_event: Optional[GraphEventCallback] = None,
+    ) -> CoreRequestResult:
+        """Run the main graph for one C1 envelope.
+
+        ``on_graph_event(kind, node, update)`` is optional and observational
+        only: it is called with ``("node_started", name, None)`` before a node
+        runs and ``("node_finished", name, update)`` after it returns, so the
+        API layer can stream progress (agent.state / task.progress). It never
+        changes routing or state."""
         await self.ensure_main_graph()
         self.repos.requests.create(envelope)
         self.repos.audit.append("request_received", envelope.request_id, None,
                                {"session_id": envelope.session_id})
         initial = MainGraphState(request=envelope)
         config = {"configurable": {"thread_id": envelope.request_id}}
-        raw_state = await self.main_graph.ainvoke(initial, config)
+        if on_graph_event is None:
+            raw_state = await self.main_graph.ainvoke(initial, config)
+        else:
+            async for event in self.main_graph.astream(initial, config, stream_mode="debug"):
+                await _forward_graph_event(event, on_graph_event)
+            raw_state = (await self.main_graph.aget_state(config)).values
         state = raw_state if isinstance(raw_state, MainGraphState) else MainGraphState.model_validate(raw_state)
         result = self._result_from_state(state)
         self.repos.audit.append("request_completed", envelope.request_id, None,
@@ -394,6 +421,20 @@ class CoreEngine:
 
     async def _run_worker_now(self, envelope: RequestEnvelope, packet: TaskPacket, session_id: str) -> Any:
         return await self.worker.run(packet, envelope.request_id, session_id)
+
+
+async def _forward_graph_event(event: dict[str, Any], callback: GraphEventCallback) -> None:
+    """Translate one LangGraph ``debug`` stream item into the engine's small
+    observational vocabulary. Checkpoint items are ignored."""
+    payload = event.get("payload") or {}
+    name = payload.get("name")
+    if not name:
+        return
+    if event.get("type") == "task":
+        await callback("node_started", name, None)
+    elif event.get("type") == "task_result":
+        update = {channel: value for channel, value in payload.get("result") or []}
+        await callback("node_finished", name, update)
 
 
 def _child_envelope(parent_request_id: str, session_id: str, user_input: str) -> RequestEnvelope:

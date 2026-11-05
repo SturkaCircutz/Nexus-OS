@@ -11,3 +11,4 @@ langgraph==0.2.60
 langgraph-checkpoint-sqlite==2.0.1
 aiosqlite==0.20.0
 pytest==8.2.0
+httpx==0.25.2

@@ -47,6 +47,10 @@ deterministic behavior with a typed `MODEL_UNAVAILABLE` note.
     validated touchpoints only: supervisor query planning
     (`DiscoveryQueryPlan`, ≤3) and final synthesis (`SynthesisOffer`,
     evidence refs must be a subset of collected evidence).
+- **API flow** (+15 tests in `tests/systems/test_api_flow.py`): `/api/v1`
+  runs streamed over a per-session WebSocket, confirm/clarify interrupts that
+  resume the same run, cancel, and `ui.command`/`ui.command.ack` as the live
+  desktop bridge transport. See `docs/AI-Core/07-api-flow.md`.
 - **Phase 4/5** (later): memory consolidation loops and crash/restart tests.
 
 ## Tech Stack
@@ -58,7 +62,13 @@ deterministic behavior with a typed `MODEL_UNAVAILABLE` note.
 ## Folder Layout
 ```
 apps/engine/backend/
-├── main.py                  # FastAPI entry point (legacy + AI-Core endpoints)
+├── main.py                  # FastAPI entry point (legacy + AI-Core + /api/v1)
+├── api/                     # API flow: /api/v1 runs, session WebSocket, ui.command bridge
+│   ├── events.py            #   wire vocabulary (event types, agent states, envelope)
+│   ├── hub.py               #   per-session sockets, wm.state, pending ui.command acks
+│   ├── runs.py              #   RunManager: background runs, interrupts, resume, cancel
+│   ├── ui_bridge.py         #   DesktopBridge over WS: ui.command -> ui.command.ack
+│   └── routes.py            #   /api/v1 router + error shape
 ├── requirements.txt
 ├── config/engine_settings.py  # engine knobs (env-driven, safe local defaults)
 ├── schemas/contracts.py     # canonical contracts C1–C9 (source: docs/AI-Core/02)
@@ -115,6 +125,15 @@ AI-Core surface:
   `{"decision": "approved"|"rejected", "session_id": "..."}`. Applies the
   decision (session-proof, pending-only) and, when approved, resumes the
   bounded work through the same proposal fingerprint.
+
+API flow surface (`/api/v1`, full reference in `docs/AI-Core/07-api-flow.md`):
+- `POST /api/v1/agent/runs` -> `202 {run_id}`; progress streams over the socket
+- `GET /api/v1/agent/runs/{run_id}`, `POST .../resume`, `POST .../cancel`
+- `GET /api/v1/tools`, `GET /api/v1/health`
+- `WS /api/v1/ws?session_id={uuid}`: `agent.state`, `task.progress`,
+  `ui.command`, `run.interrupt`, `run.response`, `run.completed`, `run.error`
+  out; `ui.command.ack`, `wm.state` in. Approved native tools reach the shell
+  as `ui.command` (no ack in `NEXUS_UI_ACK_TIMEOUT_MS` -> `unknown_outcome`).
 
 Consumed by `src-tauri` sidecar via local HTTP on port 8000.
 

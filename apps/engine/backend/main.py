@@ -6,6 +6,10 @@ pre-AI-Core contract working for the Tauri sidecar. The AI-Core surface is:
 - ``POST /agent/requests``   - validate a C1 RequestEnvelope, run the main graph
 - ``POST /agent/approvals/{approval_id}/decision`` - decide a pending C5 and
   resume the bounded work it was blocking
+
+The API-flow surface (``/api/v1``: runs, WebSocket events, ui.command) is
+mounted from ``api/`` - see docs/AI-Core/07-api-flow.md. All three surfaces
+share one engine instance.
 """
 
 from __future__ import annotations
@@ -17,27 +21,51 @@ from fastapi import FastAPI, HTTPException
 from pydantic import ValidationError
 
 from agent.core import CoreEngine, CoreRequestResult
-from agent.loop import ReActLoop
+from api import ApiRuntime, create_v1_router, install_error_handlers
 from schemas.contracts import RequestEnvelope
 
-app = FastAPI(title="NEXUS OS Agent Brain", version="0.2.0")
+app = FastAPI(title="NEXUS OS Agent Brain", version="0.3.0")
 
-react_loop = ReActLoop()
-engine: CoreEngine | None = None
+runtime: ApiRuntime | None = None
+_react_loop = None
+
+
+def _legacy_loop():
+    """Legacy ReAct loop, imported lazily: ``agent/loop.py`` still imports the
+    removed ``OllamaProvider`` (renamed in ec39430), and importing it at
+    module load stopped the whole server from starting."""
+    global _react_loop
+    if _react_loop is None:
+        try:
+            from agent.loop import ReActLoop
+        except ImportError as error:
+            raise HTTPException(status_code=503,
+                                detail=f"legacy ReAct loop unavailable: {error}") from error
+        _react_loop = ReActLoop()
+    return _react_loop
+
+
+def _runtime() -> ApiRuntime:
+    global runtime
+    if runtime is None:
+        runtime = ApiRuntime.build()
+    return runtime
 
 
 def _core() -> CoreEngine:
-    global engine
-    if engine is None:
-        engine = CoreEngine()
-    return engine
+    return _runtime().engine
+
+
+app.include_router(create_v1_router(_runtime))
+install_error_handlers(app)
 
 
 @app.on_event("shutdown")
 async def shutdown_engine() -> None:
-    if engine is not None:
-        await engine.aclose()
-        engine = None
+    global runtime
+    if runtime is not None:
+        await runtime.aclose()
+        runtime = None
 
 
 @app.get("/health")
@@ -52,13 +80,13 @@ async def health() -> dict:
 
 @app.post("/desktop/state")
 async def get_desktop_state() -> dict:
-    return await react_loop.get_desktop_state()
+    return await _legacy_loop().get_desktop_state()
 
 
 @app.post("/agent/invoke")
 async def agent_invoke(payload: dict) -> dict:
     intent = payload.get("intent", "")
-    return await react_loop.run(intent)
+    return await _legacy_loop().run(intent)
 
 
 # ---------------------------------------------------------------------------

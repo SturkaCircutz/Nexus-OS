@@ -100,6 +100,12 @@ class EngineSettings:
     model_api_key: Optional[str] = field(
         default_factory=lambda: os.getenv("NEXUS_MODEL_API_KEY")
     )
+    # API flow (api/): how long the engine waits for the shell to answer a
+    # WS ``ui.command`` with ``ui.command.ack``. No ack in time means the
+    # gateway records ``unknown_outcome`` (the command may have applied).
+    ui_ack_timeout_seconds: float = field(
+        default_factory=lambda: float(_env("NEXUS_UI_ACK_TIMEOUT_MS", "2000")) / 1000.0
+    )
 
     @property
     def approved_root_paths(self) -> list[Path]:

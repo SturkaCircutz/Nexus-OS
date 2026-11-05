@@ -20,6 +20,7 @@ The supplied brief establishes the architecture's intent, named graph nodes, mem
 4. Use [04 - Implementation rules and roadmap](04-implementation-rules-and-roadmap.md) to sequence work and check non-negotiable rules.
 5. Keep [05 - Reference glossary](05-reference-glossary.md) open as the canonical vocabulary, inventory, and Mermaid source.
 6. Follow [06 - Extending NEXUS](06-extending-nexus.md) whenever you add a tool, module, or agent.
+7. Use [07 - API flow](07-api-flow.md) for the shell ⇄ engine surface: `/api/v1` runs, WebSocket events, `ui.command`, avatar states.
 
 The companion [diagram PDF](NEXUS-AI-CORE-Architecture-Diagrams.pdf) contains six zoomable, vector diagrams:
 
