@@ -8,11 +8,16 @@
     "apps/shell/frontend/internal-apps/*/frontend"
   ],
   "scripts": {
+    "test": "npm run test:search",
     "dev": "cd apps/shell/frontend && npm run dev",
     "build": "cd apps/shell/frontend && npm run build",
     "tauri": "cd src-tauri && cargo run",
     "engine": "cd apps/engine/backend && python main.py",
-    "setup": "bash scripts/dev-setup.sh"
+    "setup": "bash scripts/dev-setup.sh",
+    "test:search": "node scripts/test-search.mjs"
+  },
+  "overrides": {
+    "vite": "8.3.5"
   },
   "devDependencies": {}
 }
