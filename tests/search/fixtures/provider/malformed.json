@@ -1,0 +1,13 @@
+{
+  "results": [
+    {
+      "id": "malformed_fixture",
+      "kind": "web",
+      "url": "not-a-public-url",
+      "source_name": "Broken Provider",
+      "unexpected_provider_field": true
+    }
+  ],
+  "next_cursor": null,
+  "has_more": false
+}

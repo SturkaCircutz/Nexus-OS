@@ -1,0 +1,7 @@
+{
+  "scenarios": {
+    "web": "success",
+    "image": "empty",
+    "video": "timeout"
+  }
+}
