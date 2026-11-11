@@ -33,4 +33,6 @@ Validate generated artifacts and examples:
 python scripts/validate-search-contracts.py
 ```
 
-See `docs/search/contracts.md` for field semantics, limits, pagination, deduplication, partial-success behavior, and AI tool mappings.
+## Implemented retrieval integration
+
+See the [API reference](../../docs/retrieval/api.md) for the two implemented tools and their HTTP endpoints, and the [run guide](../../docs/retrieval/README.md) for an interactive demo. Image, video, and mixed-search models remain contracts only.

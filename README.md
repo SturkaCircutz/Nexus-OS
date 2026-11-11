@@ -19,6 +19,10 @@
 
 ---
 
+## Retrieval tool implementation
+
+The headless Chromium retrieval tools have their own [run guide](docs/retrieval/README.md), [API reference](docs/retrieval/api.md), [architecture](docs/retrieval/architecture.md), and [test and packaging guide](docs/retrieval/testing.md). Start there to test search fixtures and live page fetching. The broader desktop sections below include scaffold and planned capabilities.
+
 ## Executive Overview
 
 Modern desktop interaction remains rigidly application-centric. Users spend disproportionate cognitive bandwidth manually arranging windows, toggling workspaces, launching processes, and switching between siloed tools. Meanwhile, traditional AI assistants run inside sandboxed chat widgets, blind to open windows, monitors, or active system tasks.
@@ -190,8 +194,8 @@ interface WindowState {
 | `resize_window` | Mutate | `window_id, width, height` | Resizes viewport |
 | `set_window_mode` | Mutate | `window_id, mode` | Toggles minimized/windowed/fullscreen |
 | `switch_workspace` | Mutate | `workspace_id` | Cycles virtual workspace |
-| `search_web` | Network | `query, max_results?` | Retrieves search data |
-| `fetch_article` | Network | `url` | Extracts markdown content |
+| `search_web` | Network | `query, limit=5` | Retrieves search data (maximum 10) |
+| `fetch_page` | Network | `url` | Extracts readable text and page metadata |
 | `persist_workspace`| Storage | `name, layout` | Saves topology to SQLite |
 
 ---
@@ -201,9 +205,9 @@ interface WindowState {
 ### Prerequisites
 
 1. **OS:** Windows 10/11 (x86_64)
-2. **Node.js:** v18+
+2. **Node.js:** v20.19+
 3. **Rust:** latest stable
-4. **Python:** 3.11+
+4. **Python:** 3.12 for retrieval development and packaging
 5. **C++ Build Tools:** Visual Studio Build Tools (Desktop development with C++)
 6. **Ollama (optional):** running `llama3.1:8b` or `qwen2.5-coder`
 

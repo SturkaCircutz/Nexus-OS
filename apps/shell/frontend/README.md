@@ -40,4 +40,11 @@ npm run dev
 Consumes Tauri commands exposed by `src-tauri/src/commands/`. See `src/types/ipc.ts`.
 
 ## Testing
-No test runner configured. Add Vitest + React Testing Library.
+
+Run the frontend suite once:
+
+```bash
+npm run test:run
+```
+
+Use `npm test` for watch mode. The Search & Discover tests use Vitest, React Testing Library, JSDOM, and the generated search contracts.
