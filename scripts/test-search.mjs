@@ -37,6 +37,7 @@ if (process.platform === 'win32' && !npmCli) {
 run('contract generation', python, ['scripts/generate-search-contracts.py', '--check'])
 run('contract examples', python, ['scripts/validate-search-contracts.py'])
 run('backend tests', python, ['-m', 'pytest'])
+run('AI-Core systems tests', python, ['-m', 'pytest', 'tests/systems', '-q'])
 run('frontend tests', npmCli ? process.execPath : 'npm', [
   ...(npmCli ? [npmCli] : []), '--prefix', frontendRoot, 'run', 'test:run',
 ])

@@ -3,12 +3,25 @@
 import pytest
 from fastapi.testclient import TestClient
 
+import main
 from main import app
+from api import ApiRuntime
+from config.engine_settings import EngineSettings
 from search.errors import RetrievalError
 from search.models import SearchErrorCode
 
 TOKEN = "test-only-retrieval-token"
 HEADERS = {"Authorization": f"Bearer {TOKEN}"}
+
+
+@pytest.fixture(autouse=True)
+def isolated_core(monkeypatch, tmp_path):
+    runtime = ApiRuntime.build(EngineSettings.for_test(tmp_path))
+    monkeypatch.setattr(main, "runtime", runtime)
+    try:
+        yield
+    finally:
+        runtime.engine.close()
 
 
 @pytest.fixture
@@ -26,7 +39,7 @@ def test_health_docs_and_discovery(client):
     schema = client.get("/openapi.json").json()
     assert schema["paths"]["/api/v1/web/search"]["post"]["security"] == [{"HTTPBearer": []}]
     assert "422" in schema["paths"]["/api/v1/web/browse"]["post"]["responses"]
-    result = client.get("/api/v1/tools", headers=HEADERS)
+    result = client.get("/api/v1/web/tools", headers=HEADERS)
     assert result.status_code == 200
     assert result.json()["mode"] == "live"
     assert not result.json()["google_live_enabled"]
@@ -47,7 +60,7 @@ def test_authentication_is_required(client, headers):
 def test_api_is_disabled_without_token(monkeypatch):
     monkeypatch.delenv("NEXUS_API_TOKEN", raising=False)
     with TestClient(app) as client:
-        result = client.get("/api/v1/tools", headers=HEADERS)
+        result = client.get("/api/v1/web/tools", headers=HEADERS)
     assert result.status_code == 503
 
 
@@ -113,3 +126,22 @@ def test_invalid_mode_fails_startup(monkeypatch):
     monkeypatch.setenv("NEXUS_RETRIEVAL_MODE", "typo")
     with pytest.raises(ValueError, match="live or fixtures"):
         with TestClient(app): pass
+
+
+def test_merged_core_and_retrieval_routes_keep_separate_contracts(client):
+    from agent.tools import RetrievalToolRegistry, ToolRegistry
+    from agent.tools.registry import ToolRegistry as CoreRegistry
+
+    assert ToolRegistry is CoreRegistry
+    assert isinstance(app.state.retrieval_registry, RetrievalToolRegistry)
+    paths = [(route.path, method) for route in app.routes for method in getattr(route, "methods", [])]
+    assert len(paths) == len(set(paths)), "Duplicate route would shadow another team's API"
+    core = client.get("/api/v1/tools")
+    assert core.status_code == 200
+    assert "system_diagnostics" in {tool["tool_id"] for tool in core.json()["tools"]}
+    assert "mode" not in core.json()
+    invalid_run = client.post("/api/v1/agent/runs", json={})
+    assert invalid_run.status_code == 400
+    assert invalid_run.json()["error"]["code"] == "INVALID_INPUT"
+    assert "x-nexus-retrieval-mode" not in invalid_run.headers
+    assert client.get("/api/v1/web/tools", headers=HEADERS).json()["mode"] == "live"

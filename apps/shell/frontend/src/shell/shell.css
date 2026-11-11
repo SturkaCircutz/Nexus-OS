@@ -1,0 +1,107 @@
+/* Desktop layers: dot field, stage and grid, and the hosts apps render into.
+   The floating chrome (menu bar, dock, Spotlight, avatar) is in chrome/chrome.css. */
+
+.nx-desktop {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+  font-family: var(--sans);
+}
+
+/* Stacking, back to front. Chrome positions itself; only the stage needs lifting. */
+.nx-desktop {
+  --z-stage: 1;
+  --z-fullscreen: 20;
+  --z-flight: 25;
+  --z-menubar: 30;
+  --z-dock: 35;
+  --z-agent: 40;
+  --z-spotlight: 50;
+}
+
+.nx-dots {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* --- Stage and grid --- */
+
+.nx-stage {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: var(--z-stage);
+  padding: calc(var(--chrome-top) + 24px) 24px calc(var(--chrome-bottom) + 24px);
+  transition: opacity 300ms var(--ease);
+}
+
+/* Avatar in the centre: the desk steps back so the conversation leads. */
+.nx-desktop[data-focus] .nx-stage {
+  opacity: 0.4;
+}
+
+.nx-grid-box {
+  position: relative;
+}
+
+.nx-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+
+.nx-slot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition:
+    transform 480ms var(--ease),
+    width 480ms var(--ease),
+    height 480ms var(--ease);
+}
+
+.nx-desktop[data-reduced] .nx-slot {
+  transition: none;
+}
+
+/* --- App instances (one stable div per app, moved between hosts) --- */
+
+.nx-instance {
+  position: absolute;
+  inset: 0;
+}
+
+.nx-instance-inner {
+  height: 100%;
+  border-radius: var(--radius);
+  outline: none;
+}
+
+/* Spotlight or the dock handed focus to an app with no controls of its own. */
+.nx-instance-inner:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Minimized apps wait here, still mounted. */
+.nx-keepalive {
+  display: none;
+}
+
+/* Apps fly through here on their way into the dock. */
+.nx-flight {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-flight);
+  pointer-events: none;
+}

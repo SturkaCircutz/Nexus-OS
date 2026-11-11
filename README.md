@@ -51,8 +51,12 @@ nexus-os/
 │   ├── shell/                              # React Desktop Frontend (Presentation Shell)
 │   │   ├── frontend/
 │   │   │   ├── src/
-│   │   │   │   ├── components/             # WindowFrame, Taskbar, WorkspaceCanvas
-│   │   │   │   ├── hooks/                  # useDesktopState, useIPC, useGesture
+│   │   │   │   ├── shell/                  # Desktop, WidgetGrid, DotField, agent prompt
+│   │   │   │   ├── wm/                     # desktop store + snap-grid layout
+│   │   │   │   ├── apps/                   # app registry (sizes, aliases, modes)
+│   │   │   │   ├── ui/                     # shared ASCII primitives (AsciiFrame, …)
+│   │   │   │   ├── theme/                  # light/dark tokens, ThemeProvider
+│   │   │   │   ├── hooks/                  # useIPC, useGesture
 │   │   │   │   ├── internal-apps/          # internal apps (each: frontend + backend)
 │   │   │   │   │   ├── notes/
 │   │   │   │   │   │   ├── frontend/       # React widget UI

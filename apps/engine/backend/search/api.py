@@ -56,11 +56,11 @@ async def require_token(request: Request, credentials: HTTPAuthorizationCredenti
 router = APIRouter(prefix="/api/v1", tags=["Retrieval"], dependencies=[Depends(require_token)])
 
 
-@router.get("/tools", responses=ERROR_RESPONSES, summary="List retrieval tools and current mode")
+@router.get("/web/tools", responses=ERROR_RESPONSES, summary="List retrieval tools and current mode")
 async def tools(request: Request):
     return {"mode": request.app.state.retrieval_mode,
             "google_live_enabled": request.app.state.google_live_enabled,
-            "tools": request.app.state.tool_registry.retrieval_definitions()}
+            "tools": request.app.state.retrieval_registry.retrieval_definitions()}
 
 
 @router.post("/web/search", response_model=SearchWebToolResponse, responses=ERROR_RESPONSES,
@@ -82,7 +82,7 @@ async def domain_error(request: Request, error: RetrievalError):
 
 
 async def validation_error(request: Request, error: RequestValidationError):
-    if not request.url.path.startswith("/api/v1/"):
+    if not request.url.path.startswith("/api/v1/web/"):
         return await request_validation_exception_handler(request, error)
     # Do not echo arbitrary request values or credentials into errors/logs.
     return response_for(request, RetrievalError(SearchErrorCode.INVALID_REQUEST,
@@ -97,7 +97,7 @@ class RetrievalRequestMiddleware:
         self.app = app
 
     async def __call__(self, scope, receive, send):
-        if scope["type"] != "http" or not scope["path"].startswith("/api/v1/"):
+        if scope["type"] != "http" or not scope["path"].startswith("/api/v1/web/"):
             return await self.app(scope, receive, send)
         request_id = uuid4().hex
         scope.setdefault("state", {})["request_id"] = request_id

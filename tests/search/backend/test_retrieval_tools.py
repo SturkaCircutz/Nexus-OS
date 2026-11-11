@@ -131,9 +131,9 @@ async def test_service_cannot_return_more_than_requested(provider_fixtures):
 
 
 async def test_existing_registry_delegates_to_retrieval_service(provider_fixtures):
-    from agent.tools import ToolRegistry
+    from agent.tools import RetrievalToolRegistry
     service = FixtureService(provider_fixtures)
-    registry = ToolRegistry(service)
+    registry = RetrievalToolRegistry(service)
     results = await registry.web.search_web("news", limit=1)
     assert len(results.results) == 1
     page = await registry.web.fetch_page(str(results.results[0].url))

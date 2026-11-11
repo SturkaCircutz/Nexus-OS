@@ -2,7 +2,7 @@
 
 Base URL for local development: `http://127.0.0.1:8000`.
 Interactive reference: `/docs`. Machine-readable OpenAPI: `/openapi.json`.
-The HTTP routes call the same Python tools used by the agent; there are no internal
+The HTTP routes expose Python retrieval tools for future agent integration; there are no internal
 HTTP requests from a tool back to FastAPI.
 
 ## Endpoints
@@ -10,8 +10,8 @@ HTTP requests from a tool back to FastAPI.
 | Method | Path | Authentication | Behavior |
 | --- | --- | --- | --- |
 | GET | `/api/v1/health` | None | Process health; does not launch Chromium or promise browser availability |
-| GET | `/health` | None | Compatibility alias for process health |
-| GET | `/api/v1/tools` | Bearer | Current retrieval mode, live-Google flag, and both tool definitions |
+| GET | `/health` | None | Process health without initializing AI-Core |
+| GET | `/api/v1/web/tools` | Bearer | Current retrieval mode, live-Google flag, and both tool definitions |
 | POST | `/api/v1/web/search` | Bearer | Calls `search_web(query, limit)` |
 | POST | `/api/v1/web/browse` | Bearer | Calls `fetch_page(url)` |
 | GET | `/docs`, `/openapi.json` | None | API documentation and schemas; no secrets |
@@ -19,8 +19,12 @@ HTTP requests from a tool back to FastAPI.
 Legacy `POST /desktop/state` and `POST /agent/invoke` remain unchanged scaffolding.
 They do not run the implemented retrieval tools and are not protected by the new
 retrieval bearer dependency. Do not treat them as production agent APIs.
-Run/resume/cancel endpoints, WebSocket events, voice endpoints, and arbitrary tool
-invocation endpoints from the earlier team diagram have **not** been implemented.
+The merged AI-Core implements run/resume/cancel endpoints and session WebSocket events;
+see [the AI-Core API flow](../AI-Core/07-api-flow.md). `GET /api/v1/tools`
+remains its canonical registry discovery endpoint. Retrieval discovery is separately
+available at `/api/v1/web/tools` to preserve both contracts. Retrieval is not yet
+registered behind the AI-Core policy gateway. Voice and arbitrary tool invocation
+endpoints are not implemented by the retrieval service.
 
 ## Authentication and runtime mode
 
@@ -139,8 +143,10 @@ Retrieval and validation failures use:
 | 503 | `service_unavailable`, `browser_unavailable`, missing API configuration |
 | 504 | `fetch_timeout`, `browser_timeout`, `provider_timeout` |
 
-Unknown routes/methods use FastAPI's normal 404/405 responses. The request body limit
-is 16 KiB, enforced before JSON parsing. Requests to `/api/v1/` receive `X-Request-ID`,
+Unknown routes/methods use FastAPI's normal 404/405 responses. Retrieval middleware
+and validation apply only under `/api/v1/web/`; AI-Core keeps its own error contract.
+The request body limit
+is 16 KiB, enforced before JSON parsing. Requests to `/api/v1/web/` receive `X-Request-ID`,
 `X-Nexus-Retrieval-Mode`, and `Cache-Control: no-store` headers. On search/page success
 and structured errors, the body request ID matches the header. Error messages do not
 include raw upstream responses, credentials, stack traces, or validation input values.
@@ -152,22 +158,22 @@ retry delay; there are no automatic request retries in this implementation.
 During FastAPI lifespan, call:
 
 ```python
-result = await app.state.tool_registry.web.search_web("desktop retrieval", limit=5)
-page = await app.state.tool_registry.web.fetch_page("https://example.org/article")
-definitions = app.state.tool_registry.retrieval_definitions()
+result = await app.state.retrieval_registry.web.search_web("desktop retrieval", limit=5)
+page = await app.state.retrieval_registry.web.fetch_page("https://example.org/article")
+definitions = app.state.retrieval_registry.retrieval_definitions()
 ```
 
 Standalone callers (with the backend directory on Python's import path):
 
 ```python
-from agent.tools import ToolRegistry
+from agent.tools import RetrievalToolRegistry
 from search.browser import BrowserRuntime
 from search.config import create_service
 from search.models import SearchErrorResponse
 
 async with BrowserRuntime() as browser:
     service = create_service(browser, mode="fixtures")
-    registry = ToolRegistry(service)
+    registry = RetrievalToolRegistry(service)
     result = await registry.web.search_web("desktop retrieval", limit=2)
     if isinstance(result, SearchErrorResponse):
         print(result.error.code, result.error.message)

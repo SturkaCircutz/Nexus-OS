@@ -13,7 +13,7 @@ No third-party search API is used.
 
 ```mermaid
 flowchart TD
-    API[Authenticated FastAPI routes] --> Tools[RetrievalTools / existing ToolRegistry]
+    API[Authenticated FastAPI routes] --> Tools[RetrievalTools / RetrievalToolRegistry]
     AI[Future AI tool executor] --> Tools
     CLI[CLI demo] --> Tools
     Tools --> Service[PageRetrievalService]
@@ -121,3 +121,9 @@ and fixture data. Missing resources fail explicitly; no runtime browser download
 The macOS ARM64 package has been exercised locally. Windows has a native CI build and
 fresh-runner smoke workflow prepared, but it has not run in this session. No Tauri MSI,
 Windows desktop acceptance test, or production child-process supervisor is claimed.
+
+After merging AI-Core, one FastAPI lifespan shuts down both the retrieval browser
+and any initialized agent runtime. The canonical `ToolRegistry` stays owned by
+AI-Core; `RetrievalToolRegistry` is a separate facade pending gateway integration.
+Packaged startup includes the AI-Core SQL schema and defaults writable engine state
+to `~/.nexus/`, with existing `NEXUS_*` state-path environment overrides respected.

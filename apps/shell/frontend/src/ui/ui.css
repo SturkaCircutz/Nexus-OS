@@ -1,0 +1,195 @@
+/* Shared ASCII primitives. Every widget builds from these so none brings its own look. */
+
+/* --- ASCII frame --- */
+
+.ascii-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.ascii-frame--fluid {
+  height: auto;
+}
+
+.ascii-frame[data-exiting] {
+  pointer-events: none;
+}
+
+.ascii-frame-surface {
+  position: absolute;
+  inset: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow:
+    0 1px 2px var(--shadow),
+    0 8px 24px var(--shadow);
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease;
+}
+
+.ascii-frame-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  font: 13px/16px var(--mono);
+  color: var(--muted);
+  white-space: pre;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.ascii-frame-label {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  font: 11px/1 var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.ascii-frame-content {
+  position: absolute;
+  inset: 0;
+  padding: 38px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.ascii-frame--fluid .ascii-frame-content {
+  position: relative;
+}
+
+.ascii-caret {
+  animation: nx-blink 1s steps(1) infinite;
+}
+
+@keyframes nx-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ascii-caret {
+    animation: none;
+  }
+}
+
+/* --- Monospace text block --- */
+
+.w-mono {
+  margin: 0;
+  font: 12px/1.7 var(--mono);
+  color: var(--ink);
+  white-space: pre;
+  overflow: hidden;
+}
+
+/* --- Chip --- */
+
+.chip {
+  min-height: 30px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  font: 11px var(--mono);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background-color 150ms var(--ease),
+    transform 100ms ease-out;
+}
+
+/* Feedback starts on pointer-down, not on release. */
+.chip:active:not(:disabled),
+.nx-press:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.nx-press {
+  transition:
+    background-color 150ms var(--ease),
+    transform 100ms ease-out;
+}
+
+.chip:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--surface);
+}
+
+.chip:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.chip--action {
+  min-width: 52px;
+  color: var(--accent);
+}
+
+/* --- Glass: floating chrome only. Never on widgets, never stacked on other glass. --- */
+
+.nx-glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 1px 0 var(--glass-edge),
+    0 1px 1px var(--shadow),
+    0 16px 40px var(--shadow-float);
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .nx-glass {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  .nx-glass {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-color: var(--ink);
+  }
+}
+
+/* --- Spinner --- */
+
+.ascii-spinner {
+  display: inline-block;
+  width: 1ch;
+  font-family: var(--mono);
+  text-align: center;
+}
+
+/* --- Kbd --- */
+
+kbd {
+  display: inline-block;
+  min-width: 18px;
+  margin-right: 3px;
+  padding: 1px 4px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: inherit;
+  text-align: center;
+}

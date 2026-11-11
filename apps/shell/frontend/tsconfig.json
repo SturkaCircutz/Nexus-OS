@@ -11,9 +11,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@nexus/window-state": ["../../../modules/window-state/types.ts"],
       "@components/*": ["src/components/*"],
       "@hooks/*": ["src/hooks/*"],
-      "@internal-apps/*": ["src/internal-apps/*/frontend/*"],
+      "@internal-apps/*": ["src/internal-apps/*"],
       "@types/*": ["src/types/*"],
       "@vision/*": ["src/vision/*"]
     }

@@ -22,6 +22,8 @@ jobs:
         run: python scripts/validate-search-contracts.py
       - name: Run offline unit tests
         run: python -m pytest -m "not browser"
+      - name: Run AI-Core systems tests
+        run: python -m pytest tests/systems -q
       - name: Install Chromium
         run: python -m playwright install chromium --no-shell
       - name: Test browser boundaries

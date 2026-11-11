@@ -1,0 +1,101 @@
+/* Nexus OS theme tokens and base styles. ThemeProvider sets data-theme on <html>. */
+
+:root {
+  --bg: #f5f4f0;
+  --surface: #fdfcfa;
+  --ink: #26261f;
+  --muted: #6b685f;
+  --line: #dcd8ce;
+  --dot: #cfcbc1; /* light grey */
+  --accent: #2f6b62;
+  --shadow: rgba(40, 38, 30, 0.05);
+  --shadow-float: rgba(40, 38, 30, 0.12);
+  --accent-soft: rgba(47, 107, 98, 0.1);
+
+  /* Glass: floating chrome only (menu bar, dock, Spotlight, avatar). Widgets stay paper. */
+  --glass: rgba(253, 252, 250, 0.72);
+  --glass-edge: rgba(255, 255, 255, 0.7);
+  --glass-blur: blur(20px) saturate(1.4);
+  --scrim: rgba(245, 244, 240, 0.6);
+
+  /* Room the chrome takes at the top and bottom of the screen. */
+  --menubar-h: 32px;
+  --chrome-top: 40px;
+  --chrome-bottom: 72px;
+
+  --radius: 12px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --sans: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Older widgets (the clock) read these names. */
+  --nexus-bg: var(--surface);
+  --nexus-text: var(--ink);
+  --nexus-accent: var(--accent);
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --bg: #0f0f0e;
+  --surface: #181816;
+  --ink: #e8e6df;
+  --muted: #9b988f;
+  --line: #2e2d29;
+  --dot: #3a3935; /* dark grey */
+  --accent: #74b8ad;
+  --shadow: rgba(0, 0, 0, 0.35);
+  --shadow-float: rgba(0, 0, 0, 0.5);
+  --accent-soft: rgba(116, 184, 173, 0.14);
+  --glass: rgba(24, 24, 22, 0.7);
+  --glass-edge: rgba(255, 255, 255, 0.06);
+  --scrim: rgba(15, 15, 14, 0.6);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  overflow: hidden;
+  transition: background-color 300ms ease;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Browser surfaces carry the palette too. */
+::selection {
+  background: var(--accent);
+  color: var(--surface);
+}
+
+* {
+  caret-color: var(--accent);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}

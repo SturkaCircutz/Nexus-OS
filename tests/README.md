@@ -3,7 +3,7 @@
 | Suite | Location | Purpose |
 |-------|----------|---------|
 | bench | `tests/bench/` | LLM tool-calling benchmark suites |
-| systems | `tests/systems/` | Win32 window hooking unit tests |
+| systems | `tests/systems/` | AI-Core contracts/policy/gateway/graphs suite |
 | vision | `tests/vision/` | Gesture classification evaluations |
 
 ## Search & Discover
@@ -17,6 +17,6 @@ npm test
 ```
 
 ## How to Run
-Search & Discover now uses pytest, FastAPI's in-process test client, Vitest, React Testing Library, and JSDOM. Rust, systems, vision, and broader shell suites still need dedicated runners.
+Search & Discover now uses pytest, FastAPI's in-process test client, Vitest, React Testing Library, and JSDOM. AI-Core systems tests run separately with `python -m pytest tests/systems -q` from the repository root using the backend environment.
 
 See the [retrieval testing guide](../docs/retrieval/testing.md) for dependency setup, opt-in Chromium tests, API checks, and native packaging.

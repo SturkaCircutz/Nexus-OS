@@ -1,0 +1,94 @@
+/* Clock widget. Uses the shell's colour tokens, with fallbacks so it also renders standalone. */
+
+.nexus-clock {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--nexus-text, #c5c6c7);
+  font-variant-numeric: tabular-nums;
+}
+
+.nexus-clock-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+}
+
+.nexus-clock-time {
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: var(--nexus-accent, #66fcf1);
+}
+
+.nexus-clock-period {
+  margin-left: 0.2em;
+  font-size: 0.4em;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--nexus-text, #c5c6c7);
+}
+
+.nexus-clock-date {
+  font-size: 13px;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* Size presets */
+.nexus-clock--small .nexus-clock-time { font-size: 32px; }
+.nexus-clock--medium .nexus-clock-time { font-size: 44px; }
+.nexus-clock--large .nexus-clock-time { font-size: 22px; }
+.nexus-clock--large .nexus-clock-face { gap: 8px; }
+
+/* Analog face (large only) */
+.nexus-clock-analog {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 220px;
+}
+
+.nexus-clock-dial {
+  fill: var(--nexus-bg, #0b0c10);
+  stroke: var(--line, #45a29e);
+  stroke-width: 1.5;
+}
+
+.nexus-clock-tick {
+  stroke: var(--nexus-text, #c5c6c7);
+  stroke-width: 1;
+  stroke-linecap: round;
+  opacity: 0.5;
+}
+
+.nexus-clock-tick--major {
+  stroke-width: 2;
+  opacity: 0.9;
+}
+
+.nexus-clock-hand {
+  stroke-linecap: round;
+  stroke: var(--nexus-text, #c5c6c7);
+}
+
+.nexus-clock-hand--hour { stroke-width: 3.5; }
+.nexus-clock-hand--minute { stroke-width: 2.5; }
+.nexus-clock-hand--second {
+  stroke-width: 1;
+  stroke: var(--nexus-accent, #66fcf1);
+}
+
+.nexus-clock-pin {
+  fill: var(--nexus-accent, #66fcf1);
+}

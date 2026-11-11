@@ -1,0 +1,479 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-31T12:00:00Z",
+  "title": "Design System: Nexus OS Shell",
+  "extensions": {
+    "colorMeta": {
+      "teal": {
+        "role": "primary",
+        "displayName": "Teal",
+        "tonalRamp": [
+          "#0f2b27",
+          "#173d38",
+          "#21544d",
+          "#2f6b62",
+          "#4a877d",
+          "#6fa59c",
+          "#a3c8c1",
+          "#d9ebe7"
+        ]
+      },
+      "teal-soft": {
+        "role": "primary",
+        "displayName": "Teal Soft",
+        "purpose": "Selection wash only (Spotlight row, checked anchor)."
+      },
+      "night-teal": {
+        "role": "primary",
+        "displayName": "Night Teal",
+        "tonalRamp": [
+          "#173d38",
+          "#2f6b62",
+          "#4a877d",
+          "#5fa097",
+          "#74b8ad",
+          "#94cbc2",
+          "#b9ddd7",
+          "#e0f0ed"
+        ]
+      },
+      "night-teal-soft": {
+        "role": "primary",
+        "displayName": "Night Teal Soft"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Paper",
+        "tonalRamp": [
+          "#26261f",
+          "#4a4840",
+          "#6b685f",
+          "#9b988f",
+          "#cfcbc1",
+          "#dcd8ce",
+          "#f5f4f0",
+          "#fdfcfa"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Card"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink"
+      },
+      "pencil": {
+        "role": "neutral",
+        "displayName": "Pencil"
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Rule"
+      },
+      "dot": {
+        "role": "neutral",
+        "displayName": "Dot"
+      },
+      "night": {
+        "role": "neutral",
+        "displayName": "Night",
+        "tonalRamp": [
+          "#0f0f0e",
+          "#181816",
+          "#2e2d29",
+          "#3a3935",
+          "#6b685f",
+          "#9b988f",
+          "#c8c5bc",
+          "#e8e6df"
+        ]
+      },
+      "night-card": {
+        "role": "neutral",
+        "displayName": "Night Card"
+      },
+      "night-ink": {
+        "role": "neutral",
+        "displayName": "Night Ink"
+      },
+      "night-pencil": {
+        "role": "neutral",
+        "displayName": "Night Pencil"
+      },
+      "night-rule": {
+        "role": "neutral",
+        "displayName": "Night Rule"
+      },
+      "night-dot": {
+        "role": "neutral",
+        "displayName": "Night Dot"
+      }
+    },
+    "typographyMeta": {
+      "input": {
+        "displayName": "Input",
+        "purpose": "The Spotlight field."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Spotlight rows, widget text."
+      },
+      "bubble": {
+        "displayName": "Bubble",
+        "purpose": "Agent replies."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Data blocks, terminal output, dock chips, glyphs, wordmark."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Frame labels, chips, menu bar, Spotlight footer."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Spotlight group names and keys inside chrome."
+      },
+      "frame": {
+        "displayName": "Frame",
+        "purpose": "The ASCII border grid; fixed metrics so characters land on card edges."
+      },
+      "face": {
+        "displayName": "Face",
+        "purpose": "The avatar's 3×2 character face."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card",
+        "value": "0 1px 2px var(--shadow), 0 8px 24px var(--shadow)",
+        "purpose": "Widgets at rest on the paper."
+      },
+      {
+        "name": "float",
+        "value": "inset 0 1px 0 var(--glass-edge), 0 1px 1px var(--shadow), 0 16px 40px var(--shadow-float)",
+        "purpose": "Glass chrome (.nx-glass): dock, Spotlight, avatar, bubble."
+      },
+      {
+        "name": "bar",
+        "value": "inset 0 1px 0 var(--glass-edge), 0 1px 2px var(--shadow)",
+        "purpose": "The menu bar, the lowest glass."
+      },
+      {
+        "name": "popover",
+        "value": "0 1px 2px var(--shadow), 0 16px 40px var(--shadow-float)",
+        "purpose": "Solid popovers inside chrome (anchor picker)."
+      },
+      {
+        "name": "shadow-tones",
+        "value": "--shadow rgba(40,38,30,.05) / dark rgba(0,0,0,.35); --shadow-float rgba(40,38,30,.12) / dark rgba(0,0,0,.5)",
+        "purpose": "Shadow colors per theme."
+      }
+    ],
+    "glass": [
+      {
+        "name": "--glass",
+        "value": "rgba(253, 252, 250, 0.72) / dark rgba(24, 24, 22, 0.7)",
+        "purpose": "Chrome fill over the dot field."
+      },
+      {
+        "name": "--glass-blur",
+        "value": "blur(20px) saturate(1.4)",
+        "purpose": "backdrop-filter for chrome."
+      },
+      {
+        "name": "--glass-edge",
+        "value": "rgba(255, 255, 255, 0.7) / dark rgba(255, 255, 255, 0.06)",
+        "purpose": "Color of the 1px inset top highlight."
+      },
+      {
+        "name": "--scrim",
+        "value": "rgba(245, 244, 240, 0.6) / dark rgba(15, 15, 14, 0.6)",
+        "purpose": "Pushes the grid back behind Spotlight and fullscreen."
+      },
+      {
+        "name": "--hover",
+        "value": "color-mix(in srgb, var(--ink) 7%, transparent)",
+        "purpose": "Hover tint for chrome buttons, dock chips, picker cells."
+      },
+      {
+        "name": "fallback",
+        "value": "prefers-reduced-transparency → solid var(--surface), no blur; prefers-contrast: more → solid var(--surface) + var(--ink) border",
+        "purpose": "Accessibility fallbacks on .nx-glass."
+      },
+      {
+        "name": "no-nesting",
+        "value": "popovers inside glass use solid var(--surface) + 1px var(--line)",
+        "purpose": "Anchor picker, dock key hint."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(0.2, 0.7, 0.2, 1)",
+        "purpose": "CSS transitions: chips, slot moves (480ms), dock reveal (360ms), fullscreen inset (360ms), scrim (300ms)."
+      },
+      {
+        "name": "spring-model",
+        "value": "stiffness = (2π / response)²; friction = 4π · damping / response; mass 1; substeps ≤ 1/240s; frame dt capped at 1/30s",
+        "purpose": "Apple-style {damping, response} springs; always start from current value and velocity, so any animation is interruptible and retargetable."
+      },
+      {
+        "name": "spring-move",
+        "value": "damping 1, response 0.4s",
+        "purpose": "Travel: fullscreen FLIP, dock flights, avatar slow release, anchor changes."
+      },
+      {
+        "name": "spring-sheet",
+        "value": "damping 1, response 0.3s",
+        "purpose": "Spotlight grows from its origin (scale 0.5 → 1, opacity p × 1.6, scrim tracks p) and shrinks back."
+      },
+      {
+        "name": "spring-fling",
+        "value": "damping 0.8, response 0.4s",
+        "purpose": "Avatar thrown faster than 300px/s; small bounce carries momentum."
+      },
+      {
+        "name": "spring-fade",
+        "value": "damping 1, response 0.15s",
+        "purpose": "Spotlight under reduced motion: opacity only."
+      },
+      {
+        "name": "project",
+        "value": "(v / 1000) · d / (1 − d), default d = 0.998",
+        "purpose": "Where a flung avatar would coast to; picks the nearest anchor."
+      },
+      {
+        "name": "rubberband",
+        "value": "(o · dim · 0.55) / (dim + 0.55 · |o|)",
+        "purpose": "Resistance when dragging the avatar past the safe area."
+      },
+      {
+        "name": "press",
+        "value": "scale(0.97), 100ms ease-out on :active (.nx-press, .chip, avatar); avatar drag scale(1.04)",
+        "purpose": "Feedback on pointer-down."
+      },
+      {
+        "name": "pop",
+        "value": "160ms ease, from scale(0.96) translateY(-4px)",
+        "purpose": "Anchor picker opening from its button."
+      },
+      {
+        "name": "bubble",
+        "value": "200ms ease from scale(0.96), origin at the avatar side; types 18ms/char; stays 6s, held on hover",
+        "purpose": "Agent reply in and out."
+      },
+      {
+        "name": "avatar-frames",
+        "value": "110ms spinner/mouth frames; blink every 4–7s",
+        "purpose": "Face animation; no ambient loops."
+      },
+      {
+        "name": "ascii-enter",
+        "value": "draw 540ms + fill 450ms + settle 280ms; exit 1.7× faster",
+        "purpose": "AsciiFrame build-in and rewind."
+      },
+      {
+        "name": "ascii-move",
+        "value": "480ms pulse",
+        "purpose": "Border flickers back to ASCII while a widget travels."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "springs → jumps or 150–220ms opacity fades; dock flights skipped; picker/bubble/dock lose transform",
+        "purpose": "prefers-reduced-motion fallback."
+      }
+    ],
+    "zOrder": [
+      {
+        "name": "dots",
+        "value": "0"
+      },
+      {
+        "name": "--z-stage",
+        "value": "1"
+      },
+      {
+        "name": "--z-fullscreen",
+        "value": "20"
+      },
+      {
+        "name": "--z-flight",
+        "value": "25"
+      },
+      {
+        "name": "--z-menubar",
+        "value": "30"
+      },
+      {
+        "name": "--z-dock",
+        "value": "35"
+      },
+      {
+        "name": "--z-agent",
+        "value": "40"
+      },
+      {
+        "name": "--z-spotlight",
+        "value": "50"
+      }
+    ],
+    "layout": [
+      {
+        "name": "grid",
+        "value": "6 × 4 cells of 160px, 16px gap; scales down to fit (min 0.3), never up"
+      },
+      {
+        "name": "--menubar-h",
+        "value": "32px"
+      },
+      {
+        "name": "--chrome-top",
+        "value": "40px"
+      },
+      {
+        "name": "--chrome-bottom",
+        "value": "72px"
+      },
+      {
+        "name": "stage-padding",
+        "value": "chrome + 24px top/bottom, 24px sides"
+      },
+      {
+        "name": "avatar-anchors",
+        "value": "7: top-left, top-center, top-right, center, bottom-left, bottom-center, bottom-right; 16px edge inset inside the chrome"
+      },
+      {
+        "name": "fullscreen-clear",
+        "value": "100px away from the avatar's side (92px below chrome at top-center, 84px above at bottom-center)"
+      },
+      {
+        "name": "center-focus",
+        "value": "stage opacity 0.4 while the avatar rests at center"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "menubar-compact",
+        "value": "760px",
+        "purpose": "Below this, status words hide; controls and clock stay."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Size, move and action toggles (Spotlight action bar, widgets, fullscreen back).",
+      "html": "<button class=\"ds-chip\">2x1</button> <button class=\"ds-chip\" aria-pressed=\"true\">2x2</button> <button class=\"ds-chip ds-chip--action\">open</button>",
+      "css": ".ds-chip { min-height: 30px; padding: 4px 8px; border: 1px solid var(--line, #dcd8ce); border-radius: 6px; background: transparent; font: 11px 'JetBrains Mono', ui-monospace, monospace; color: var(--ink, #26261f); cursor: pointer; transition: background-color 150ms cubic-bezier(.2,.7,.2,1), transform 100ms ease-out; } .ds-chip:hover { background: var(--bg, #f5f4f0); } .ds-chip:active { transform: scale(.97); } .ds-chip:focus-visible { outline: 2px solid var(--accent, #2f6b62); outline-offset: 2px; } .ds-chip[aria-pressed='true'] { background: var(--ink, #26261f); border-color: var(--ink, #26261f); color: var(--surface, #fdfcfa); } .ds-chip--action { min-width: 52px; color: var(--accent, #2f6b62); }"
+    },
+    {
+      "name": "Key",
+      "kind": "custom",
+      "description": "Keyboard hint boxes; smaller and pencil inside chrome.",
+      "html": "<span class=\"ds-hint\"><kbd class=\"ds-kbd\">⌘</kbd><kbd class=\"ds-kbd\">K</kbd>ask</span> <span class=\"ds-hint ds-hint--chrome\"><kbd class=\"ds-kbd\">↵</kbd>open</span>",
+      "css": ".ds-hint { font: 11px 'JetBrains Mono', ui-monospace, monospace; color: var(--ink, #26261f); } .ds-kbd { display: inline-block; min-width: 18px; margin-right: 3px; padding: 1px 4px; border: 1px solid var(--line, #dcd8ce); border-radius: 4px; font: inherit; text-align: center; } .ds-hint--chrome .ds-kbd { min-width: 16px; margin-right: 2px; padding: 0 3px; font-size: 10px; line-height: 15px; color: var(--muted, #6b685f); }"
+    },
+    {
+      "name": "Widget Card",
+      "kind": "card",
+      "refersTo": "widget-card",
+      "description": "Resting state of an ASCII-framed widget.",
+      "html": "<section class=\"ds-card\" tabindex=\"0\"><span class=\"ds-card-label\">notes</span><p class=\"ds-card-body\">buy oat milk\nship phase 2</p></section>",
+      "css": ".ds-card { position: relative; width: 336px; height: 160px; padding: 38px 18px 16px; background: var(--surface, #fdfcfa); border: 1px solid var(--line, #dcd8ce); border-radius: 12px; box-shadow: 0 1px 2px var(--shadow, rgba(40,38,30,.05)), 0 8px 24px var(--shadow, rgba(40,38,30,.05)); } .ds-card:focus-visible { outline: 2px solid var(--accent, #2f6b62); outline-offset: 3px; } .ds-card-label { position: absolute; top: 18px; left: 18px; font: 11px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .04em; color: var(--muted, #6b685f); } .ds-card-body { margin: 0; font: 14px/1.5 Inter, system-ui, sans-serif; color: var(--ink, #26261f); white-space: pre-line; }"
+    },
+    {
+      "name": "Glass Menu Bar",
+      "kind": "nav",
+      "refersTo": "menubar-button",
+      "description": "The 32px glass line at the top: wordmark, agent status, honest status words, controls.",
+      "html": "<header class=\"ds-bar\"><span class=\"ds-bar-group\"><span class=\"ds-bar-mark\">nexus</span><span class=\"ds-bar-status\" data-status=\"thinking\">/ thinking</span></span><span class=\"ds-bar-group\"><span class=\"ds-bar-item\">mic off</span><span class=\"ds-bar-item\">engine local</span><button class=\"ds-bar-btn\"><kbd class=\"ds-bar-kbd\">⌘</kbd><kbd class=\"ds-bar-kbd\">K</kbd>ask</button><button class=\"ds-bar-btn\">light</button><span class=\"ds-bar-clock\">14:02</span></span></header>",
+      "css": ".ds-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; height: 32px; padding: 0 8px 0 16px; background: var(--glass, rgba(253,252,250,.72)); -webkit-backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); border: 1px solid var(--line, #dcd8ce); border-width: 0 0 1px; box-shadow: inset 0 1px 0 var(--glass-edge, rgba(255,255,255,.7)), 0 1px 2px var(--shadow, rgba(40,38,30,.05)); font: 11px 'JetBrains Mono', ui-monospace, monospace; color: var(--muted, #6b685f); } .ds-bar-group { display: flex; align-items: center; gap: 4px; white-space: nowrap; } .ds-bar-mark { margin-right: 12px; font-size: 12px; letter-spacing: .04em; color: var(--ink, #26261f); } .ds-bar-status[data-status='thinking'] { color: var(--accent, #2f6b62); } .ds-bar-item { padding: 0 8px; } .ds-bar-clock { padding: 0 8px; color: var(--ink, #26261f); font-variant-numeric: tabular-nums; } .ds-bar-btn { height: 24px; display: inline-flex; align-items: center; gap: 2px; padding: 0 8px; border: 0; border-radius: 6px; background: transparent; font: inherit; color: var(--ink, #26261f); cursor: pointer; transition: background-color 150ms cubic-bezier(.2,.7,.2,1), transform 100ms ease-out; } .ds-bar-btn:hover { background: color-mix(in srgb, var(--ink, #26261f) 7%, transparent); } .ds-bar-btn:active { transform: scale(.97); } .ds-bar-btn:focus-visible { outline: 2px solid var(--accent, #2f6b62); outline-offset: 2px; } .ds-bar-kbd { display: inline-block; min-width: 16px; margin-right: 2px; padding: 0 3px; border: 1px solid var(--line, #dcd8ce); border-radius: 4px; font: 10px/15px 'JetBrains Mono', ui-monospace, monospace; color: var(--muted, #6b685f); text-align: center; }"
+    },
+    {
+      "name": "Spotlight Row",
+      "kind": "custom",
+      "refersTo": "spotlight-row",
+      "description": "Grouped results in the Spotlight listbox; the selected row gets the teal-soft wash and a teal glyph.",
+      "html": "<div class=\"ds-sheet\"><label class=\"ds-field\"><span class=\"ds-mark\">&gt;</span><input placeholder=\"ask nexus or find an app\"></label><ul class=\"ds-list\" role=\"listbox\"><li class=\"ds-section\" role=\"presentation\">on the desk</li><li class=\"ds-row\" role=\"option\" aria-selected=\"true\"><span class=\"ds-glyph\">[=]</span><span>notes</span><span class=\"ds-meta\">2x1</span></li><li class=\"ds-row\" role=\"option\"><span class=\"ds-glyph\">[&gt;]</span><span>terminal</span><span class=\"ds-meta\">minimized</span></li></ul></div>",
+      "css": ".ds-sheet { width: 520px; border-radius: 16px; overflow: hidden; background: var(--glass, rgba(253,252,250,.72)); -webkit-backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); border: 1px solid var(--line, #dcd8ce); box-shadow: inset 0 1px 0 var(--glass-edge, rgba(255,255,255,.7)), 0 1px 1px var(--shadow, rgba(40,38,30,.05)), 0 16px 40px var(--shadow-float, rgba(40,38,30,.12)); } .ds-field { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--line, #dcd8ce); } .ds-mark { font: 16px 'JetBrains Mono', ui-monospace, monospace; color: var(--accent, #2f6b62); } .ds-field input { flex: 1; border: 0; background: transparent; font: 16px/1.4 Inter, system-ui, sans-serif; color: var(--ink, #26261f); caret-color: var(--accent, #2f6b62); } .ds-field input:focus { outline: none; } .ds-field input::placeholder { color: var(--muted, #6b685f); } .ds-list { list-style: none; margin: 0; padding: 6px; } .ds-section { margin: 10px 12px 4px; font: 10px 'JetBrains Mono', ui-monospace, monospace; letter-spacing: .06em; color: var(--muted, #6b685f); } .ds-row { display: grid; grid-template-columns: 4ch 1fr auto; align-items: center; gap: 10px; min-height: 38px; padding: 0 12px; border-radius: 8px; font: 14px Inter, system-ui, sans-serif; color: var(--ink, #26261f); cursor: pointer; } .ds-row:hover { background: color-mix(in srgb, var(--ink, #26261f) 7%, transparent); } .ds-row[aria-selected='true'] { background: var(--accent-soft, rgba(47,107,98,.1)); } .ds-glyph, .ds-meta { font: 12px 'JetBrains Mono', ui-monospace, monospace; color: var(--muted, #6b685f); } .ds-row[aria-selected='true'] .ds-glyph { color: var(--accent, #2f6b62); }"
+    },
+    {
+      "name": "Dock",
+      "kind": "nav",
+      "refersTo": "dock-chip",
+      "description": "Glass pill shown only when needed; pill chips with pencil glyphs that turn teal on focus.",
+      "html": "<div class=\"ds-dock\"><button class=\"ds-dock-chip\"><span class=\"ds-dock-glyph\">[=]</span>notes</button><button class=\"ds-dock-chip\"><span class=\"ds-dock-glyph\">[&gt;]</span>terminal</button><span class=\"ds-dock-rule\"></span><button class=\"ds-dock-chip ds-dock-apps\">⌘K apps</button></div>",
+      "css": ".ds-dock { display: inline-flex; align-items: center; gap: 2px; padding: 5px; border-radius: 999px; background: var(--glass, rgba(253,252,250,.72)); -webkit-backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); border: 1px solid var(--line, #dcd8ce); box-shadow: inset 0 1px 0 var(--glass-edge, rgba(255,255,255,.7)), 0 1px 1px var(--shadow, rgba(40,38,30,.05)), 0 16px 40px var(--shadow-float, rgba(40,38,30,.12)); } .ds-dock-chip { height: 34px; display: inline-flex; align-items: center; gap: 8px; padding: 0 14px; border: 0; border-radius: 999px; background: transparent; font: 12px 'JetBrains Mono', ui-monospace, monospace; color: var(--ink, #26261f); white-space: nowrap; cursor: pointer; transition: background-color 150ms cubic-bezier(.2,.7,.2,1), transform 100ms ease-out; } .ds-dock-chip:hover { background: color-mix(in srgb, var(--ink, #26261f) 7%, transparent); } .ds-dock-chip:active { transform: scale(.97); } .ds-dock-chip:focus-visible { outline: 2px solid var(--accent, #2f6b62); outline-offset: 2px; } .ds-dock-glyph { color: var(--muted, #6b685f); } .ds-dock-chip:focus-visible .ds-dock-glyph { color: var(--accent, #2f6b62); } .ds-dock-apps { gap: 2px; color: var(--muted, #6b685f); } .ds-dock-rule { width: 1px; height: 18px; margin: 0 4px; background: var(--line, #dcd8ce); }"
+    },
+    {
+      "name": "Agent Avatar",
+      "kind": "custom",
+      "refersTo": "agent-avatar",
+      "description": "72px glass button with a 3×2 ASCII face; edge and face turn teal while the agent works.",
+      "html": "<button class=\"ds-avatar\" aria-label=\"Nexus, bottom right\"><pre class=\"ds-face\">o o\n - </pre></button> <button class=\"ds-avatar\" data-status=\"thinking\" aria-label=\"Nexus, thinking\"><pre class=\"ds-face\">| |\n - </pre></button>",
+      "css": ".ds-avatar { width: 72px; height: 72px; display: inline-grid; place-items: center; padding: 0; border-radius: 20px; background: var(--glass, rgba(253,252,250,.72)); -webkit-backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); border: 1px solid var(--line, #dcd8ce); box-shadow: inset 0 1px 0 var(--glass-edge, rgba(255,255,255,.7)), 0 1px 1px var(--shadow, rgba(40,38,30,.05)), 0 16px 40px var(--shadow-float, rgba(40,38,30,.12)); color: var(--ink, #26261f); cursor: grab; transition: transform 100ms ease-out, background-color 300ms ease, border-color 300ms ease; } .ds-avatar:active { transform: scale(.97); } .ds-avatar:focus-visible { outline: 2px solid var(--accent, #2f6b62); outline-offset: 2px; } .ds-avatar[data-status='thinking'] { border-color: var(--accent, #2f6b62); color: var(--accent, #2f6b62); } .ds-face { margin: 0; font: 600 20px/22px 'JetBrains Mono', ui-monospace, monospace; white-space: pre; pointer-events: none; }"
+    },
+    {
+      "name": "Agent Bubble",
+      "kind": "custom",
+      "refersTo": "agent-bubble",
+      "description": "Glass reply bubble beside the avatar; errors get an ink edge and an x mark, no second hue.",
+      "html": "<p class=\"ds-bubble\">notes is on the desk at 2x1.</p> <p class=\"ds-bubble ds-bubble--error\"><span class=\"ds-bubble-mark\">x </span>there's no room for a 4x2 right now.</p>",
+      "css": ".ds-bubble { width: max-content; max-width: 300px; margin: 0 0 8px; padding: 10px 14px; border-radius: 14px; background: var(--glass, rgba(253,252,250,.72)); -webkit-backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); backdrop-filter: var(--glass-blur, blur(20px) saturate(1.4)); border: 1px solid var(--line, #dcd8ce); box-shadow: inset 0 1px 0 var(--glass-edge, rgba(255,255,255,.7)), 0 1px 1px var(--shadow, rgba(40,38,30,.05)), 0 16px 40px var(--shadow-float, rgba(40,38,30,.12)); font: 13px/1.45 Inter, system-ui, sans-serif; color: var(--ink, #26261f); } .ds-bubble--error { border-color: var(--ink, #26261f); } .ds-bubble-mark { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 600; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Terminal",
+    "overview": "Nexus OS is a desk of warm paper with a faint dot grid, and on it sit a few cards the agent placed for you. Nothing on the desk is decoration. ASCII is how things move and how things are marked: a card draws its border corner to corner, types its content in, then settles into a clean edge; apps are named by small bracket glyphs like `[=]`; the agent's face is two lines of characters. At rest the screen should almost disappear.\n\nThe shell has two materials. Widgets are flat paper cards. The chrome that floats above them (menu bar, dock, Spotlight, the avatar and its bubble) is light frosted glass, so the dot field shows through softly and you can tell at once what is content and what is the system. A popover that opens inside glass is solid paper, never more glass.\n\nMotion follows Apple's interaction model. Every press responds on pointer-down. Travel uses springs described by damping and response; they start from wherever a thing is now, keep its velocity when interrupted, and things leave along the path they came in. With reduced motion, travel becomes a short fade or a jump, and the ASCII build is skipped.",
+    "keyCharacteristics": [
+      "Warm paper neutrals with one teal accent, mirrored for dark mode",
+      "Inter for reading, JetBrains Mono for labels, keys, glyphs and every ASCII frame",
+      "Fixed 6×4 grid of 160px cells; the system picks geometry, never the user",
+      "ASCII frames for enter, move and exit; clean borders at rest",
+      "Glass only on floating chrome; solid under reduced transparency or high contrast",
+      "Springs (damping + response), interruptible, symmetric paths"
+    ],
+    "rules": [
+      {
+        "name": "The One Accent Rule",
+        "body": "Teal marks focus, selection and the agent at work. It is never decorative, and no second hue joins it. Errors use ink and an `x` mark, not red.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Layer Rule",
+        "body": "Widgets are flat paper; only floating chrome is glass. Glass never sits on glass: the dock hides while Spotlight is open, and popovers inside glass (anchor picker, dock hint) are solid card.",
+        "section": "colors"
+      },
+      {
+        "name": "The ASCII-Born Rule",
+        "body": "Things enter, move and leave through ASCII frames, and the system marks things in characters (`[=]`, `>`, `x`, the face). The clean border is the resting state, not the default render.",
+        "section": "typography"
+      },
+      {
+        "name": "The Same-Path Rule",
+        "body": "Things leave the way they came. Spotlight grows out of whatever opened it (the ⌘K button, the dock's apps chip, the avatar) and shrinks back into it, returning focus there. Minimized apps fly into their dock chip and back to their cell; fullscreen grows from and returns to its cell; the dock slides down past the edge it rose from.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do start every press response on pointer-down (scale .97).",
+      "Do animate travel with springs that start from the current value and hand velocity off between gestures.",
+      "Do let things exit along the path they entered and return focus to what opened them.",
+      "Do fall back to solid card under `prefers-reduced-transparency`, and add an ink border under `prefers-contrast: more`.",
+      "Do replace travel with a short fade or a jump under reduced motion.",
+      "Do show honest system state (\"engine local\", \"mic off\") instead of invented numbers.",
+      "Do mark state with characters and ink (`x`, a border) before reaching for color."
+    ],
+    "donts": [
+      "Don't put glass on widgets or stack glass on glass; use a solid card popover inside chrome.",
+      "Don't add title bars, drag handles or resize grips; the window manager stays hidden.",
+      "Don't introduce a second accent hue, a red error state, or teal fills beyond the soft selection wash.",
+      "Don't run slow ambient loops (breathing, drifting) on resting elements; the idle avatar blinks at random intervals instead.",
+      "Don't show a permanent taskbar; the dock appears only when it has something to show."
+    ]
+  }
+}

@@ -26,9 +26,9 @@ npm ci
 npm test
 ```
 
-The frontend checks validate generated result contracts. The separate `npm run build`
-currently fails because the existing shell scaffold has no `index.html` entry point.
-This is outside the retrieval implementation; do not treat the desktop app as build-ready. There is no new search UI
+The frontend checks validate generated result contracts and the merged shell tests.
+The updated shell from main supplies the missing entry point; `npm run build`
+checks its production bundle. There is no new search UI
 in the desktop shell. Swagger is the interactive test surface for this implementation.
 
 The CLI examples in the quick start are manual demos. A real public-page request is
@@ -51,7 +51,8 @@ On macOS ARM64 with Python 3.12.6:
 - Live page retrieval from `https://www.python.org/about/` returned extracted text.
 
 Two dependency deprecation warnings remain in Starlette's test dependencies.
-The separate desktop frontend build failed on its missing `index.html` entry point.
+At that checkpoint the desktop build lacked `index.html`; the subsequent main merge
+supplied the shell entry point. See the merge verification below for current results.
 Windows and live Google validation have not been performed.
 
 ## Native package
@@ -110,3 +111,23 @@ are ignored. `git diff --check` and the commands above are the local commit chec
 
 This is a testable retrieval/API milestone, not a claim that live Google, Windows,
 the full AI agent, or the Tauri installer is production-ready.
+
+## Main-branch merge verification — 2026-11-11
+
+Integrated `origin/main` at `7a5fb07`, preserving AI-Core runs/WebSocket routes
+and its canonical tool registry. Retrieval discovery is now `/api/v1/web/tools`;
+`/api/v1/tools` keeps the AI-Core contract. Retrieval uses `RetrievalToolRegistry`.
+Pydantic is pinned to 2.7.4 to satisfy LangGraph dependencies on Python 3.12.
+
+- `npm test`: 146 retrieval/backend tests, 65 AI-Core systems tests, and 56 frontend tests passed.
+- Opt-in real-Chromium suite: 7 passed.
+- `npm run build`: production frontend bundle passed; main supplied the missing entry point.
+- `pip check`, generated contracts, and merge-resolution whitespace checks against `origin/main` passed.
+  The full incoming diff contains pre-existing whitespace warnings in AI-Core docs/PDF;
+  those upstream files were preserved.
+- Rebuilt macOS ARM64 package passed its offline self-test.
+- Source and packaged servers completed AI-Core diagnostics, fixture search,
+  JavaScript-rendered browse, health/discovery/OpenAPI, and graceful shutdown checks.
+- Windows execution and live Google compatibility remain unverified.
+
+The root test runner and Windows workflow now include the AI-Core systems suite.

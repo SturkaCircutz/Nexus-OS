@@ -47,6 +47,8 @@ def main() -> None:
         "--name", "nexus-engine", "--distpath", str(output), "--workpath", str(work / "pyinstaller"),
         "--specpath", str(work), "--paths", str(BACKEND),
         "--add-data", f"{ROOT / 'tests/search/fixtures/html'}:demo-fixtures",
+        "--add-data", f"{ROOT / 'modules/storage/schema.sql'}:storage",
+        "--collect-all", "langgraph", "--copy-metadata", "langchain-core",
         "--collect-all", "playwright", "--collect-all", "trafilatura",
         "--collect-data", "certifi", "--collect-data", "dateparser",
         "--collect-data", "courlan", "--collect-data", "htmldate",

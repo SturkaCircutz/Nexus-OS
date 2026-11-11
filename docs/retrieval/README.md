@@ -3,7 +3,8 @@
 NEXUS now has two Python retrieval tools and a versioned HTTP API. `search_web`
 finds source links through a browser adapter; `fetch_page` reads a public page,
 using headless Chromium when HTML extraction requires JavaScript rendering.
-The AI agent, chat interface, and Tauri integration are separate workstreams.
+The AI-Core and shell are present from main; connecting retrieval to the policy
+gateway and desktop UI remains a separate workstream.
 
 The fastest complete demonstration uses **synthetic fixtures with real Chromium**.
 Live page retrieval works separately. Live Google search is disabled by default
@@ -46,7 +47,7 @@ Open [Swagger UI](http://127.0.0.1:8000/docs). Its JavaScript assets are loaded 
 a CDN; the CLI demo below works without those browser assets after installation.
 
 1. Click **Authorize**, paste `nexus-local-demo-token` (without `Bearer`), and close the dialog.
-2. Try `GET /api/v1/tools`. It should report `mode: "fixtures"` and list two tools.
+2. Try `GET /api/v1/web/tools`. It should report `mode: "fixtures"` and list two tools.
 3. Try `POST /api/v1/web/search` with `{"query":"desktop retrieval","limit":2}`.
 4. Copy a result URL into `POST /api/v1/web/browse`, for example `{"url":"https://example.org/article"}`.
 5. Inspect the returned article text, original/final URLs, and `fixture_data` warning.
@@ -60,7 +61,7 @@ Swagger shows the resulting JSON. Stop the server with Ctrl+C.
 With the fixture server running:
 
 ```bash
-curl -sS http://127.0.0.1:8000/api/v1/tools \
+curl -sS http://127.0.0.1:8000/api/v1/web/tools \
   -H 'Authorization: Bearer nexus-local-demo-token'
 
 curl -sS http://127.0.0.1:8000/api/v1/web/search \
@@ -115,7 +116,7 @@ Chromium but no AI model, account login, or search API key.
 | Public-only HTTP page retrieval and text extraction | Implemented; public-page smoke checks performed |
 | Managed Chromium and filtered JavaScript rendering | Implemented; local integration tests and a public-page rendering check performed |
 | Google result parser and adapter | Implemented against synthetic fixtures; live compatibility unverified |
-| Agent reasoning, confirmation, run streaming, chat UI | Outside this change; existing agent routes are scaffolding |
+| Agent reasoning, confirmation, run streaming, chat UI | AI-Core and shell implementation merged from main; retrieval gateway integration pending |
 | Native backend package | macOS ARM64 package smoke-tested |
 | Windows CI/package and Tauri MSI | Workflow prepared; Windows execution and Tauri integration remain pending |
 

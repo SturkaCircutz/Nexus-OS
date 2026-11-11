@@ -36,7 +36,7 @@ async def self_test() -> None:
         raise RuntimeError("Packaged browser did not shut down")
     from main import app, health
     async with app.router.lifespan_context(app):
-        if (await health())["status"] != "ok" or len(app.state.tool_registry.retrieval_definitions()) != 2:
+        if (await health())["status"] != "ok" or len(app.state.retrieval_registry.retrieval_definitions()) != 2:
             raise RuntimeError("Packaged API/tool initialization failed")
     print(json.dumps({"status": "ok", "checks": ["chromium", "extraction_worker", "cleanup", "api_initialization"], "network": "offline"}))
 

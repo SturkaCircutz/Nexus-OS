@@ -1,46 +1,26 @@
-import React, { useState } from 'react'
-import { WindowState } from '@/types/WindowState'
-import { WindowFrame } from '@/components/WindowFrame'
+import { useState } from 'react'
+
+import { Taskbar } from '@/components/Taskbar'
+import { WorkspaceCanvas } from '@/components/WorkspaceCanvas'
+import { MockDesktopProvider } from '@/wm/MockDesktopProvider'
+import type { Size } from '@/wm/snap'
 
 export const APP_NAME = 'NEXUS OS'
 
-const EMPTY_WINDOW: WindowState = {
-  id: 'welcome',
-  appId: 'nexus.welcome',
-  title: 'Welcome to NEXUS OS',
-  mode: 'windowed',
-  x: 100,
-  y: 100,
-  width: 600,
-  height: 400,
-  workspaceId: 'default',
-  monitor: 0,
-  focused: true,
-  zIndex: 1,
-  isExternal: false,
-}
-
 export function App() {
-  const [windows, setWindows] = useState<WindowState[]>([EMPTY_WINDOW])
+  const [canvasSize, setCanvasSize] = useState<Size>({ width: 0, height: 0 })
 
+  // Glue day: replace MockDesktopProvider with the real DesktopProvider.
   return (
-    <div className="nexus-shell">
-      <header className="nexus-header">{APP_NAME}</header>
-      <main className="nexus-canvas">
-        {windows.map((w) => (
-          <WindowFrame
-            key={w.id}
-            window={w}
-            onMove={(id, x, y) =>
-              setWindows((ws) => ws.map((wi) => (wi.id === id ? { ...wi, x, y } : wi)))
-            }
-            onResize={(id, wdt, hgt) =>
-              setWindows((ws) => ws.map((wi) => (wi.id === id ? { ...wi, width: wdt, height: hgt } : wi)))
-            }
-          />
-        ))}
-      </main>
-      <aside className="nexus-taskbar">{APP_NAME}</aside>
-    </div>
+    <MockDesktopProvider canvasSize={canvasSize} persist>
+      <div className="nexus-shell">
+        <header className="nexus-header">
+          {APP_NAME}
+          <span className="nexus-header-badge">mock store</span>
+        </header>
+        <WorkspaceCanvas onSizeChange={setCanvasSize} />
+        <Taskbar canvasSize={canvasSize} />
+      </div>
+    </MockDesktopProvider>
   )
 }

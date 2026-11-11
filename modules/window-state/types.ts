@@ -15,4 +15,20 @@ export interface WindowState {
   zIndex: number
   isExternal: boolean
   externalHandle?: string
+  gridCol?: number
+  gridRow?: number
+  gridW?: number
+  gridH?: number
+}
+
+export interface DesktopGrid {
+  cols: number
+  rows: number
+}
+
+export interface DesktopSession {
+  windows: WindowState[]
+  focusedId: string | null
+  activeWorkspaceId: string
+  grid: DesktopGrid
 }
