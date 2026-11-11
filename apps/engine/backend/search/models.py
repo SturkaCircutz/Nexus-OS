@@ -14,6 +14,9 @@ MAX_RESULTS_PER_KIND = 20
 MAX_TOTAL_RESULTS = 60
 MAX_CURSOR_LENGTH = 2048
 MAX_URL_LENGTH = 2048
+DEFAULT_TOOL_RESULT_LIMIT = 5
+MAX_TOOL_RESULTS = 10
+MAX_TOOL_TEXT_LENGTH = 30_000
 
 
 class ContractModel(BaseModel):
@@ -23,6 +26,7 @@ class ContractModel(BaseModel):
         extra="forbid",
         str_strip_whitespace=True,
         use_enum_values=False,
+        revalidate_instances="always",
     )
 
 
@@ -51,6 +55,17 @@ class SearchErrorCode(str, Enum):
     UNSUPPORTED_CONTENT = "unsupported_content"
     CONTENT_TOO_LARGE = "content_too_large"
     EXTRACTION_FAILED = "extraction_failed"
+    BROWSER_UNAVAILABLE = "browser_unavailable"
+    BROWSER_CRASHED = "browser_crashed"
+    BROWSER_TIMEOUT = "browser_timeout"
+    BROWSER_BUSY = "browser_busy"
+    SEARCH_BLOCKED = "search_blocked"
+    FETCH_TIMEOUT = "fetch_timeout"
+    FETCH_FAILED = "fetch_failed"
+    PAGE_BLOCKED = "page_blocked"
+    TOO_MANY_REDIRECTS = "too_many_redirects"
+    RETRIEVAL_BUSY = "retrieval_busy"
+    FIXTURE_DATA = "fixture_data"
 
 
 class Attribution(ContractModel):
@@ -163,6 +178,30 @@ class ArticleFetchRequest(ContractModel):
     url: HttpUrl = Field(max_length=MAX_URL_LENGTH)
 
 
+class SearchWebToolRequest(ContractModel):
+    query: str = Field(min_length=1, max_length=MAX_QUERY_LENGTH, strict=True)
+    limit: int = Field(default=DEFAULT_TOOL_RESULT_LIMIT, ge=1, le=MAX_TOOL_RESULTS, strict=True)
+
+
+class FetchPageToolRequest(ArticleFetchRequest):
+    """URL syntax only; destination authorization belongs to the network service."""
+
+
+class PageContent(ArticleDocument):
+    """Extracted, untrusted source text; url remains the original source URL."""
+
+    original_url: HttpUrl = Field(max_length=MAX_URL_LENGTH)
+    final_url: HttpUrl = Field(max_length=MAX_URL_LENGTH)
+    text: str = Field(min_length=1, max_length=MAX_TOOL_TEXT_LENGTH)
+    truncated: bool
+
+    @model_validator(mode="after")
+    def validate_original_url(self) -> PageContent:
+        if self.url != self.original_url:
+            raise ValueError("url must preserve original_url")
+        return self
+
+
 class SearchPage(ContractModel):
     next_cursor: str | None = Field(default=None, min_length=1, max_length=MAX_CURSOR_LENGTH)
     has_more: bool = False
@@ -200,6 +239,10 @@ class WebSearchResponse(SearchResponseBase):
     page: SearchPage
 
 
+class SearchWebToolResponse(WebSearchResponse):
+    results: list[WebSearchResult] = Field(max_length=MAX_TOOL_RESULTS)
+
+
 class ImageSearchResponse(SearchResponseBase):
     results: list[ImageSearchResult]
     page: SearchPage
@@ -222,6 +265,10 @@ class ArticleFetchResponse(ContractModel):
     duration_ms: int = Field(ge=0)
 
 
+class FetchPageToolResponse(ArticleFetchResponse):
+    article: PageContent
+
+
 class SearchErrorDetail(ContractModel):
     code: SearchErrorCode
     message: str = Field(min_length=1, max_length=500)
@@ -236,6 +283,11 @@ class SearchErrorResponse(ContractModel):
 
 
 CONTRACT_MODELS: tuple[type[BaseModel], ...] = (
+    SearchWebToolRequest,
+    FetchPageToolRequest,
+    PageContent,
+    SearchWebToolResponse,
+    FetchPageToolResponse,
     Attribution,
     WebSearchResult,
     ImageSearchResult,

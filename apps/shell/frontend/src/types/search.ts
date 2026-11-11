@@ -34,6 +34,17 @@ export interface Attribution {
   url?: string | null
 }
 
+export interface FetchPageToolRequest {
+  url: string
+}
+
+export interface FetchPageToolResponse {
+  request_id: string
+  article: PageContent
+  warnings: Array<SearchWarning>
+  duration_ms: number
+}
+
 export interface ImageSearchRequest {
   query: string
   locale?: string | null
@@ -84,6 +95,21 @@ export interface MixedSearchResponse {
   pages: SearchPages
 }
 
+export interface PageContent {
+  id: string
+  title: string
+  url: string
+  text: string
+  source_name?: string | null
+  author?: string | null
+  published_at?: string | null
+  language?: string | null
+  attribution?: Attribution | null
+  original_url: string
+  final_url: string
+  truncated: boolean
+}
+
 export type SafeSearchMode = "off" | "moderate" | "strict"
 
 export interface SearchCursors {
@@ -92,7 +118,7 @@ export interface SearchCursors {
   video?: string | null
 }
 
-export type SearchErrorCode = "invalid_request" | "authentication_failed" | "service_starting" | "service_unavailable" | "provider_not_configured" | "provider_timeout" | "provider_rate_limited" | "provider_failure" | "unsafe_url" | "unsupported_content" | "content_too_large" | "extraction_failed"
+export type SearchErrorCode = "invalid_request" | "authentication_failed" | "service_starting" | "service_unavailable" | "provider_not_configured" | "provider_timeout" | "provider_rate_limited" | "provider_failure" | "unsafe_url" | "unsupported_content" | "content_too_large" | "extraction_failed" | "browser_unavailable" | "browser_crashed" | "browser_timeout" | "browser_busy" | "search_blocked" | "fetch_timeout" | "fetch_failed" | "page_blocked" | "too_many_redirects" | "retrieval_busy" | "fixture_data"
 
 export interface SearchErrorDetail {
   code: SearchErrorCode
@@ -126,6 +152,20 @@ export interface SearchWarning {
   kind?: SearchResultKind | null
   retryable?: boolean
   retry_after_seconds?: number | null
+}
+
+export interface SearchWebToolRequest {
+  query: string
+  limit?: number
+}
+
+export interface SearchWebToolResponse {
+  request_id: string
+  query: string
+  warnings: Array<SearchWarning>
+  duration_ms: number
+  results: Array<WebSearchResult>
+  page: SearchPage
 }
 
 export interface VideoSearchRequest {

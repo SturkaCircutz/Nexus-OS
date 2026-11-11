@@ -27,9 +27,17 @@ from search.models import (  # noqa: E402
     WebSearchRequest,
     WebSearchResponse,
     WebSearchResult,
+    SearchWebToolRequest,
+    SearchWebToolResponse,
+    FetchPageToolRequest,
+    FetchPageToolResponse,
 )
 
 EXAMPLES = {
+    "search-web-tool-request.json": SearchWebToolRequest,
+    "search-web-tool-response.json": SearchWebToolResponse,
+    "fetch-page-tool-request.json": FetchPageToolRequest,
+    "fetch-page-tool-response.json": FetchPageToolResponse,
     "web-search-request.json": WebSearchRequest,
     "image-search-request.json": ImageSearchRequest,
     "video-search-request.json": VideoSearchRequest,
