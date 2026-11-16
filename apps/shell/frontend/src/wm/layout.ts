@@ -1,4 +1,5 @@
 // Fixed widget grid. Widgets never move freely: the system places them in cells.
+// Cells have a 160px design box; fitGrid stretches them to fill the window.
 
 export const COLS = 6
 export const ROWS = 4
@@ -29,13 +30,41 @@ export interface Placement extends Slot {
   size: Size
 }
 
-/** Pixel length of a span of cells. */
-export const span = (cells: number) => cells * CELL + (cells - 1) * GAP
-/** Pixel offset of a cell index. */
-export const offset = (index: number) => index * (CELL + GAP)
+/** Logical pixel length of a span of cells (`cell` is that axis's cell size). */
+export const span = (cells: number, cell = CELL) => cells * cell + (cells - 1) * GAP
+/** Logical pixel offset of a cell index. */
+export const offset = (index: number, cell = CELL) => index * (cell + GAP)
 
+/** The design board: every cell at its 160px design box. */
 export const GRID_W = span(COLS)
 export const GRID_H = span(ROWS)
+
+/** Zoom bounds for the whole board. */
+export const MIN_SCALE = 0.3
+export const MAX_SCALE = 1.35
+/** How far a cell may grow past its design box along one axis. */
+export const MAX_CELL_STRETCH = 1.5
+
+/** How the board sits in a stage: a zoom, plus each axis's logical cell size. */
+export interface GridGeometry {
+  scale: number
+  cellW: number
+  cellH: number
+}
+
+/**
+ * Fits the board to a stage of `width`×`height` screen pixels. The zoom comes
+ * from the design board, so a cell is never smaller than the 160px box apps are
+ * designed for; then whichever axis still has room stretches its cells (up to
+ * MAX_CELL_STRETCH) so wide and tall windows fill out instead of leaving bands.
+ */
+export function fitGrid(width: number, height: number): GridGeometry {
+  const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v))
+  const scale = clamp(Math.min(width / GRID_W, height / GRID_H), MIN_SCALE, MAX_SCALE)
+  const stretch = (room: number, cells: number) =>
+    clamp((room / scale - (cells - 1) * GAP) / cells, CELL, CELL * MAX_CELL_STRETCH)
+  return { scale, cellW: stretch(width, COLS), cellH: stretch(height, ROWS) }
+}
 
 function occupancy(items: Placement[], excludeId?: string) {
   const grid = Array.from({ length: ROWS }, () => Array<boolean>(COLS).fill(false))
@@ -88,8 +117,10 @@ export function intersecting<T extends Placement>(items: T[], size: Size, slot: 
 }
 
 /** Nearest cell anchor for a logical pixel point, clamped so a w×h widget stays on the board. */
-export function snapToCell(px: number, py: number, w: number, h: number): Slot {
-  const pitch = CELL + GAP
+export function snapToCell(px: number, py: number, w: number, h: number, cellW = CELL, cellH = CELL): Slot {
   const clamp = (v: number, max: number) => Math.max(0, Math.min(max, v))
-  return { col: clamp(Math.round(px / pitch), COLS - w), row: clamp(Math.round(py / pitch), ROWS - h) }
+  return {
+    col: clamp(Math.round(px / (cellW + GAP)), COLS - w),
+    row: clamp(Math.round(py / (cellH + GAP)), ROWS - h),
+  }
 }

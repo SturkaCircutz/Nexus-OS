@@ -16,3 +16,14 @@
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
+
+/* No telemetry yet: the honest empty state fills the card, centred. */
+.nx-sysmon-empty {
+  height: 100%;
+  padding: 0 var(--s-sm);
+}
+
+.nx-sysmon-empty .nx-label {
+  line-height: 1.6;
+  color: var(--muted);
+}

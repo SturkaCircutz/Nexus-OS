@@ -94,11 +94,6 @@
   --z-agent: 40;
   --z-spotlight: 50;
 
-  /* Older widgets (the clock) read these names. Retire after apps migrate. */
-  --nexus-bg: var(--surface);
-  --nexus-text: var(--ink);
-  --nexus-accent: var(--accent);
-
   color-scheme: light;
 }
 

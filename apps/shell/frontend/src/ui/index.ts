@@ -57,6 +57,14 @@ export { useMediaLifecycle, type MediaLifecycle } from './media/useMediaLifecycl
 // L5 — templates
 export { WidgetTemplate, type WidgetTemplateProps } from './templates/WidgetTemplate'
 export { AppTemplate, type AppTemplateProps } from './templates/AppTemplate'
+export {
+  SettingsTemplate,
+  SettingsSection,
+  SettingsRow,
+  type SettingsTemplateProps,
+  type SettingsSectionProps,
+  type SettingsRowProps,
+} from './templates/SettingsTemplate'
 
 // WM integration seam (the sanctioned exception — see integration.ts)
 export {

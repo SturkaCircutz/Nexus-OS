@@ -20,7 +20,7 @@ internal-apps/clock/
 │   ├── package.json
 │   └── src/
 │       ├── App.tsx      # ClockWidget + CLOCK_GRID_SIZES
-│       └── clock.css    # Widget styles (uses the shell's --nexus-* colour tokens)
+│       └── clock.css    # Widget styles (shell semantic tokens: --ink, --accent, --surface, --line)
 └── backend/
     └── README.md        # No backend needed
 ```
