@@ -1,14 +1,15 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ThemeProvider, useReducedMotion, useTheme } from '@/theme'
 import { DesktopProvider, useDesktop } from '@/wm/desktopStore'
 import { AgentProvider, useAgent, type AgentRun } from './agent/agentStore'
+import { anchorPoint } from './agent/anchors'
 import { runCommand } from './agent/runCommand'
-import { AgentAvatar } from './avatar/AgentAvatar'
+import { AgentAvatar, AVATAR_SIZE } from './avatar/AgentAvatar'
 import { Dock } from './chrome/Dock'
 import { FullscreenHost } from './chrome/FullscreenHost'
 import { MenuBar } from './chrome/MenuBar'
 import { Spotlight } from './chrome/Spotlight'
-import { DotField } from './DotField'
+import { DotField, type Soul } from './DotField'
 import { InstanceHost } from './InstanceHost'
 import { WidgetGrid } from './WidgetGrid'
 
@@ -57,6 +58,12 @@ function DesktopScreen({ dockSummon, summonDock }: { dockSummon: number; summonD
   const reduced = useReducedMotion()
   const [spot, setSpot] = useState<SpotlightState>({ open: false, origin: null })
 
+  // The avatar feeds the dot field: its rest spot is where the OS's soul sits.
+  const soul = useMemo<Soul>(() => {
+    const at = anchorPoint(agentState.anchor, AVATAR_SIZE)
+    return { x: at.x + AVATAR_SIZE / 2, y: at.y + AVATAR_SIZE / 2, status: agentState.status }
+  }, [agentState.anchor, agentState.status])
+
   const openSpotlight = useCallback((origin?: HTMLElement | null) => {
     setSpot({ open: true, origin: origin ?? document.querySelector<HTMLElement>('[data-spotlight-origin]') })
   }, [])
@@ -104,7 +111,7 @@ function DesktopScreen({ dockSummon, summonDock }: { dockSummon: number; summonD
       data-focus={agentState.anchor === 'center' || undefined}
       data-avatar={agentState.anchor}
     >
-      <DotField theme={theme} reduced={reduced} />
+      <DotField theme={theme} reduced={reduced} soul={soul} />
       <MenuBar onAsk={openSpotlight} onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')} />
       <main className="nx-stage" inert={spot.open || undefined}>
         <WidgetGrid />

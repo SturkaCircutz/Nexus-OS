@@ -64,7 +64,15 @@ nexus-os/
 │   │   │   │   │   │   └── README.md
 │   │   │   │   │   ├── files/
 │   │   │   │   │   ├── terminal/
-│   │   │   │   │   └── system-monitor/
+│   │   │   │   │   ├── system-monitor/
+│   │   │   │   │   ├── clock/
+│   │   │   │   │   ├── timer/
+│   │   │   │   │   ├── gallery/
+│   │   │   │   │   ├── browser/
+│   │   │   │   │   ├── wm/
+│   │   │   │   │   ├── settings/
+│   │   │   │   │   ├── calc/
+│   │   │   │   │   └── calendar/
 │   │   │   │   ├── vision/                 # MediaPipe landmark detection
 │   │   │   │   ├── types/                  # WindowState, IPC schemas
 │   │   │   │   ├── App.tsx

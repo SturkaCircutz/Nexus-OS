@@ -10,23 +10,15 @@
   font-family: var(--sans);
 }
 
-/* Stacking, back to front. Chrome positions itself; only the stage needs lifting. */
-.nx-desktop {
-  --z-stage: 1;
-  --z-fullscreen: 20;
-  --z-flight: 25;
-  --z-menubar: 30;
-  --z-dock: 35;
-  --z-agent: 40;
-  --z-spotlight: 50;
-}
+/* Stacking: the z-ladder is the library's token ladder (ui/tokens/tokens.css).
+   Chrome positions itself; only the stage needs lifting. */
 
 .nx-dots {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: var(--z-dots);
   pointer-events: none;
 }
 
@@ -74,7 +66,85 @@
   transition: none;
 }
 
+/* Dragging a widget: freeze the glide, lift the card, hide the chips. The grab
+   cursor sits on the slot; interactive elements inside keep their own cursors. */
+.nx-slot[data-grab] {
+  cursor: grab;
+}
+
+.nx-slot[data-dragging] {
+  transition: none;
+  z-index: 10;
+  filter: drop-shadow(0 12px 20px rgb(0 0 0 / 0.4));
+}
+
+.nx-slot[data-dragging] .nx-slot-chips {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The drop preview: where the dragged widget will land. */
+.nx-drop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.nx-drop[data-kind='swap'] {
+  opacity: 0.45;
+}
+
+.nx-drop[data-kind='blocked'] {
+  border-color: var(--line);
+  background: transparent;
+  opacity: 0.4;
+}
+
 /* --- App instances (one stable div per app, moved between hosts) --- */
+
+/* Hover controls on a widget's slot: size, fullscreen, minimize, close. They sit
+   above the app's surface but only answer when the slot is hovered or focused. */
+.nx-slot-chips {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.nx-slot:hover .nx-slot-chips,
+.nx-slot:focus-within .nx-slot-chips {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nx-slot-chips button {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-key);
+  background: var(--surface);
+  color: var(--muted);
+  font: 11px/1 var(--mono);
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+
+.nx-slot-chips button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
 
 .nx-instance {
   position: absolute;

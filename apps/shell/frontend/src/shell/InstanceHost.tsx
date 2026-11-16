@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { getApp } from '@/apps/registry'
-import { AsciiFrame } from '@/ui'
+import { AsciiFrame, ErrorBoundary } from '@/ui'
 import { useDesktop, type AppInstance } from '@/wm/desktopStore'
 import { AppHost } from './AppHost'
 import { captureRects, hostNode, releaseHostNode, setFlightLayer, useHostSlot } from './hostNodes'
@@ -91,7 +91,10 @@ function InstanceView({ instance: it, delay, onFocus, onFullscreen, onExited }: 
         moveKey={`${it.col},${it.row},${it.size},${it.mode}`}
         onExited={onExited}
       >
-        <AppHost instance={it} />
+        {/* One boundary per instance: a crashing app never takes down the desktop. */}
+        <ErrorBoundary label={label}>
+          <AppHost instance={it} />
+        </ErrorBoundary>
       </AsciiFrame>
     </div>
   )

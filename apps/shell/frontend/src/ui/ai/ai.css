@@ -1,0 +1,121 @@
+/* L4 AI-native components. Honest state only: the words and glyphs come from the
+   wire contract, never invented. Teal marks the agent at work; errors are ink + x. */
+
+.nx-timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--fs-mono)/1.7 var(--mono);
+}
+
+.nx-timeline-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-sm);
+}
+
+.nx-timeline-glyph {
+  width: 3ch;
+  flex: none;
+  color: var(--muted);
+  text-align: center;
+}
+
+.nx-timeline-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink);
+}
+
+.nx-timeline-status {
+  flex: none;
+  color: var(--muted);
+}
+
+/* The running task is the one at work. */
+.nx-timeline-row[data-status='running'] .nx-timeline-status {
+  color: var(--accent);
+}
+
+.nx-timeline-row[data-status='failed'] .nx-timeline-label {
+  color: var(--ink);
+}
+
+.nx-timeline-row[data-status='failed'] .nx-timeline-glyph {
+  color: var(--ink);
+}
+
+.nx-timeline--empty {
+  color: var(--muted);
+  white-space: normal;
+}
+
+/* --- Tool card --- */
+
+.nx-toolcard {
+  display: flex;
+  align-items: center;
+  gap: var(--s-sm);
+  min-height: 30px;
+}
+
+.nx-toolcard-glyph {
+  width: 2ch;
+  flex: none;
+  font: var(--fs-mono) var(--mono);
+  color: var(--muted);
+}
+
+.nx-toolcard[data-status='running'] .nx-toolcard-glyph {
+  color: var(--accent);
+}
+
+.nx-toolcard[data-status='failed'] .nx-toolcard-glyph {
+  color: var(--ink);
+}
+
+.nx-toolcard-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nx-toolcard-args {
+  color: var(--muted);
+  margin-left: 1ch;
+}
+
+.nx-toolcard-ack {
+  flex: none;
+}
+
+/* --- Streaming text internals --- */
+
+/* The typing trick: hold the final size while the text arrives. */
+.nx-stream-rest {
+  visibility: hidden;
+}
+
+.nx-stream-mark {
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+/* --- Prompt --- */
+
+.nx-prompt {
+  display: flex;
+  align-items: center;
+  gap: var(--s-md);
+  padding: var(--s-sm) 0;
+}
+
+.nx-prompt .nx-search {
+  flex: 1;
+  min-width: 0;
+}

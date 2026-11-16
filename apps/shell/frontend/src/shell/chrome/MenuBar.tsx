@@ -1,19 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useTheme } from '@/theme'
-import { AsciiSpinner } from '@/ui'
-import { useAgent, type AgentStatus } from '../agent/agentStore'
+import { AgentStatus } from '@/ui'
+import { useAgent } from '../agent/agentStore'
 import { AnchorPicker } from './AnchorPicker'
 
 export const IS_MAC = typeof navigator !== 'undefined' && /mac/i.test(navigator.platform)
 export const MOD = IS_MAC ? '⌘' : 'Ctrl'
-
-const STATUS_TEXT: Record<AgentStatus, string> = {
-  idle: 'ready',
-  listening: 'listening',
-  thinking: 'thinking',
-  speaking: 'replying',
-  error: "didn't get that",
-}
 
 interface MenuBarProps {
   onAsk: (origin: HTMLElement) => void
@@ -33,10 +25,7 @@ export function MenuBar({ onAsk, onToggleTheme }: MenuBarProps) {
     <header className="nx-menubar nx-glass">
       <div className="nx-menubar-group">
         <span className="nx-wordmark">nexus</span>
-        <span className="nx-menubar-status" data-status={state.status}>
-          {state.status === 'thinking' ? <AsciiSpinner label="thinking" /> : <span aria-hidden="true">·</span>}{' '}
-          {STATUS_TEXT[state.status]}
-        </span>
+        <AgentStatus status={state.status} className="nx-menubar-status" />
       </div>
       <div className="nx-menubar-group">
         {/* Voice and the engine aren't connected yet; say so instead of faking it. */}

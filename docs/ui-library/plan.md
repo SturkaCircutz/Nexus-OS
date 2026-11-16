@@ -1,12 +1,24 @@
 # Baseline UI Library — Architecture & Implementation Plan
 
-> Status: **Proposed** (pending sign-off on the open decisions in §9). This plan is
-> grounded in the codebase as of Nov 2026. It covers what to keep, what to retire,
-> and what to build — it does not implement anything yet.
+> Status: **Adopted & implemented through Phase 3** (Nov 2026). The §9 decisions were
+> resolved as recommended: DESIGN.md "Quiet Terminal" stays (D-11), the library lives
+> in `src/ui/` (D-1), plain CSS + tokens (D-2), ASCII glyphs (D-6), self-hosted fonts
+> (D-7), per-instance error boundaries (D-8), RTL tests from day one (D-9).
 >
-> Scope: a reusable component/token/motion foundation for every future app, widget,
-> overlay and system surface in the shell. It does **not** touch the Window Manager's
-> placement logic, the engine, app backends, or the vision pipeline.
+> Landed: tokens v2, fonts, motion tokens, `ui/testing/` infra, the full L1–L2
+> primitive set, L3 overlays, the L4 AI kit, the L4B media kit, L5 templates, the
+> `WidgetPayload` type contract (§6.3), the timer widget as the first template app,
+> and a 130+ test suite (Vitest + RTL, no globals).
+>
+> Still open (in dependency order): wire `engineClient` into `Desktop` per doc 07
+> behind `NEXUS_ENGINE_URL` (the Phase-2 wiring half of D-10); rebuild Spotlight fully
+> on the primitives with zero visual change; `VideoPlayer` / `ArticleReader` /
+> `SearchResults` info widgets once the engine emits typed payloads; Settings /
+> Assistant app templates; retire the `--nexus-*` token aliases (Phase 4).
+>
+> Original scope note: a reusable component/token/motion foundation for every future
+> app, widget, overlay and system surface in the shell. It does **not** touch the
+> Window Manager's placement logic, the engine, app backends, or the vision pipeline.
 
 ---
 

@@ -1,0 +1,116 @@
+/* L4B media surfaces. Media lives in a paper box; contain letterboxes on --surface
+   with the dot texture, cover crops. Captions wrap; attribution is mandatory. */
+
+.nx-media {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-sm);
+  min-height: 0;
+}
+
+.nx-media-box {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: var(--radius-chip);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+/* The letterbox carries the dot texture, so empty area is never dead flat. */
+.nx-media[data-fit='contain'] .nx-media-box {
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 12px 12px;
+  background-position: center;
+}
+
+.nx-media[data-fit='cover'] .nx-media-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nx-media[data-fit='contain'] .nx-media-img {
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+  position: absolute;
+  inset: 0;
+  object-fit: contain;
+}
+
+.nx-media-state {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s-sm);
+  color: var(--muted);
+}
+
+.nx-media-skeleton {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(120deg, transparent 30%, var(--accent-soft) 50%, transparent 70%) var(--bg);
+  background-size: 200% 100%;
+  border-radius: var(--radius-chip);
+  animation: nx-media-pulse 1.2s ease infinite;
+}
+
+@keyframes nx-media-pulse {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -80% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-media-skeleton {
+    animation: none;
+    background: var(--bg);
+  }
+}
+
+.nx-media-error {
+  color: var(--ink);
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-xs);
+}
+
+.nx-media-error-mark {
+  font: 600 var(--fs-mono) var(--mono);
+}
+
+.nx-media-caption {
+  flex: none;
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-sm);
+}
+
+.nx-media-caption-text {
+  font: 400 var(--fs-bubble)/1.45 var(--sans);
+  color: var(--ink);
+  min-width: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.nx-source {
+  flex: none;
+  font: var(--fs-label) var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

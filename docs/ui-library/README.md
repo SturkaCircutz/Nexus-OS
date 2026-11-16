@@ -13,5 +13,8 @@ primitives, components, AI-native visualization kit and app templates.
   what to import, persistence, fullscreen, media widgets, a full worked example
   (timer widget) and a definition-of-done checklist.
 
-Status: **Proposed** — awaiting sign-off on the open decisions in `plan.md` §9
-(visual direction, legacy cleanup, engine wiring) before implementation begins.
+Status: **Adopted** — the plan's §9 decisions were resolved as recommended and
+Phases 0–3 of the §8 roadmap have landed in `apps/shell/frontend/src/ui/` (tokens,
+primitives, overlays, AI kit, media kit, templates, tests). Remaining work and the
+decision record live at the top of [`plan.md`](./plan.md); start new UI work from
+[`app-guide.md`](./app-guide.md) and import only from `@/ui`.

@@ -169,7 +169,7 @@ export function AgentAvatar({ onOpen }: { onOpen: (origin: HTMLElement) => void 
     >
       <button
         type="button"
-        className="nx-avatar nx-glass"
+        className="nx-avatar"
         aria-label={`Nexus, ${anchorLabel(state.anchor)}. Click to ask; arrow keys move it.`}
         aria-keyshortcuts="ArrowLeft ArrowRight ArrowUp ArrowDown"
         onPointerDown={onPointerDown}

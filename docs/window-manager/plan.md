@@ -1,5 +1,20 @@
 # Window Manager Plan (Phase 1 / MVP)
 
+> **Status: Superseded (Nov 2026).** The WM track shipped differently than planned
+> here — read this doc for the *contract thinking*, not the implementation map:
+> - No free placement, drag-snap or window frames. The desktop is a fixed **6×4
+>   widget grid** with pack-style placement: `src/wm/layout.ts` (pure `fits`/`findSlot`/`pack`)
+>   rendered by `shell/WidgetGrid.tsx`.
+> - No `DesktopStoreAPI` interface or Mock store split. One external store with
+>   localStorage persistence + hydration validation: `src/wm/desktopStore.tsx`.
+> - No per-window `WindowState` / session file. State is the store's
+>   `AppInstance[]`, saved/restored wholesale.
+> - Each app renders **once** into a stable detached node that is claimed by the
+>   grid / fullscreen / keep-alive containers (FLIP flights): `shell/InstanceHost.tsx`.
+>
+> The active plan for shell UI work is [`docs/ui-library/plan.md`](../ui-library/plan.md);
+> engine-facing integration is specified in `docs/AI-Core/07-api-flow.md`.
+
 ## Goal
 
 Ship a working **internal** window manager inside the Nexus React/Tauri shell so app widgets can be opened, focused, moved, resized, snapped, minimized, fullscreened, and restored after restart.

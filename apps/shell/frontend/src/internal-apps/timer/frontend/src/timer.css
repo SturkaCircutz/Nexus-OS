@@ -1,0 +1,32 @@
+/* Timer widget. Tokens only — no raw colors. The frame is the shell's; this styles
+   content only. */
+
+.nx-timer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--s-md);
+  color: var(--ink);
+}
+
+.nx-timer-time {
+  font: 400 40px/1 var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.nx-timer--small .nx-timer-time {
+  font-size: 28px;
+}
+
+.nx-timer-actions {
+  display: flex;
+  gap: var(--s-sm);
+}
+
+/* The hide control is a quiet extra, not the main verb. */
+.nx-timer-away {
+  color: var(--muted);
+}

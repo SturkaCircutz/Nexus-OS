@@ -67,11 +67,32 @@ export interface Interrupt {
   message: string
   options: string[]
 }
-/** Widget payloads are not produced by the engine yet (always []). */
+/**
+ * Typed widget payloads (plan §6.3): what the engine's tools produce and the shell
+ * renders through the media/content kit as info widgets. Mirrors
+ * `apps/engine/backend/schemas/contracts.py` — change both together. The engine
+ * emits `[]` until its tools produce payloads.
+ */
+export type ArticleBlock =
+  | { kind: 'heading'; level: 1 | 2 | 3; text: string }
+  | { kind: 'paragraph'; text: string }
+  | { kind: 'list'; items: string[] }
+
+export type WidgetPayload =
+  | { kind: 'image'; src: string; alt: string; source?: string }
+  | { kind: 'video'; src: string; poster?: string; source?: string }
+  | { kind: 'article'; title: string; blocks: ArticleBlock[]; evidenceRefs: string[] }
+  | {
+      kind: 'search'
+      query: string
+      results: Array<{ title: string; url: string; snippet: string; source: string }>
+    }
+
+/** Legacy loose form kept until the engine emits typed payloads only. */
 export type Widget = Record<string, unknown>
 export interface RunResponse {
   speech: string
-  widgets: Widget[]
+  widgets: Array<WidgetPayload | Widget>
 }
 export type RunInterruptEvent = WsEnvelope<'run.interrupt', Interrupt>
 export type RunResponseEvent = WsEnvelope<'run.response', RunResponse>

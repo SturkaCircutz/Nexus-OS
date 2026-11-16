@@ -76,3 +76,20 @@ export function pack<T extends Placement>(items: T[]): T[] | null {
   }
   return items.map((it) => placed.find((p) => p.id === it.id)!)
 }
+
+/** Items whose cells intersect a w×h widget dropped at `slot` (the drag blockers). */
+export function intersecting<T extends Placement>(items: T[], size: Size, slot: Slot, excludeId?: string): T[] {
+  const d = SIZE_DIMS[size]
+  return items.filter((it) => {
+    if (it.id === excludeId) return false
+    const o = SIZE_DIMS[it.size]
+    return it.col < slot.col + d.w && slot.col < it.col + o.w && it.row < slot.row + d.h && slot.row < it.row + o.h
+  })
+}
+
+/** Nearest cell anchor for a logical pixel point, clamped so a w×h widget stays on the board. */
+export function snapToCell(px: number, py: number, w: number, h: number): Slot {
+  const pitch = CELL + GAP
+  const clamp = (v: number, max: number) => Math.max(0, Math.min(max, v))
+  return { col: clamp(Math.round(px / pitch), COLS - w), row: clamp(Math.round(py / pitch), ROWS - h) }
+}

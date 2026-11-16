@@ -7,7 +7,7 @@
 import { createContext, useContext, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { getApp, isAppId, nearestSize, type AppId } from '@/apps/registry'
 import type { AppMode } from '@/apps/types'
-import { SIZE_ORDER, findSlot, fits, isSize, pack, type Placement, type Size, type Slot } from './layout'
+import { COLS, ROWS, SIZE_DIMS, SIZE_ORDER, findSlot, fits, intersecting, isSize, pack, type Placement, type Size, type Slot } from './layout'
 
 export interface AppInstance extends Placement {
   appId: AppId
@@ -38,14 +38,21 @@ const instance = (appId: AppId, size: Size, slot: Slot): AppInstance => ({
   mode: 'widget',
 })
 
-/** First launch: a few widgets build in one after another. */
+/** First launch: a rich, mixed desk — nearly every app, one per cell group. */
 export function defaultDesktop(): DesktopState {
   return {
     instances: [
       instance('clock', '2x2', { col: 0, row: 0 }),
-      instance('notes', '2x1', { col: 2, row: 0 }),
-      instance('monitor', '1x1', { col: 2, row: 1 }),
-      instance('files', '1x1', { col: 3, row: 1 }),
+      instance('browser', '2x2', { col: 2, row: 0 }),
+      instance('notes', '2x1', { col: 4, row: 0 }),
+      instance('gallery', '1x2', { col: 4, row: 1 }),
+      instance('timer', '1x1', { col: 5, row: 1 }),
+      instance('wm', '2x1', { col: 0, row: 2 }),
+      instance('files', '2x1', { col: 2, row: 2 }),
+      instance('monitor', '1x1', { col: 5, row: 2 }),
+      instance('calendar', '2x1', { col: 0, row: 3 }),
+      instance('settings', '1x1', { col: 2, row: 3 }),
+      instance('terminal', '2x1', { col: 3, row: 3 }),
     ],
     focusedId: null,
   }
@@ -222,6 +229,52 @@ export function createDesktopStore(initial: DesktopState) {
     if (state.focusedId !== id) update([], id)
   }
 
+  /** Drag-and-drop repositioning: a free cell takes the widget, an equal-size
+   *  widget swaps with it, and a lone different-size widget steps aside. */
+  const move = (appId: AppId, col: number, row: number): string => {
+    const { label } = getApp(appId)
+    const it = find(appId)
+    if (!it) return `${label} isn't open.`
+    if (it.mode === 'minimized') return `${label} is minimized — restore it first.`
+    if (it.mode === 'fullscreen') return `${label} is fullscreen right now.`
+    const d = SIZE_DIMS[it.size]
+    const target = {
+      col: Math.max(0, Math.min(COLS - d.w, col)),
+      row: Math.max(0, Math.min(ROWS - d.h, row)),
+    }
+    if (target.col === it.col && target.row === it.row) return `${label} is already there.`
+
+    const others = onGrid().filter((o) => o.id !== it.id)
+    if (fits(others, it.size, target)) {
+      update([{ ...it, ...target }], it.id)
+      return `moved ${label}.`
+    }
+
+    const blockers = intersecting(others, it.size, target)
+    if (blockers.length === 1) {
+      const o = blockers[0]
+      const rest = others.filter((x) => x.id !== o.id)
+      // Room for the other widget is judged with the dragged one already sitting
+      // at its target: the mover can't be parked on cells the dragged widget
+      // still holds, and its own cells only count once it has left them.
+      const occupied = [...rest, { ...it, ...target }]
+      const home = { col: it.col, row: it.row }
+      if (o.size === it.size && fits(occupied, o.size, home)) {
+        update([{ ...it, ...target }, { ...o, ...home }], it.id)
+        return `swapped ${label} and ${getApp(o.appId).label}.`
+      }
+      // Different footprints — or a half-step swap that would collide — so the
+      // other widget re-homes: the spot just vacated first, then any free cell.
+      // Never repack: a drag must not reshuffle the desk.
+      const spot = fits(occupied, o.size, home) ? home : findSlot(occupied, o.size, undefined, home)
+      if (spot) {
+        update([{ ...it, ...target }, { ...o, ...spot }], it.id)
+        return `moved ${label}; ${getApp(o.appId).label} stepped aside.`
+      }
+    }
+    return `no room to put ${label} there.`
+  }
+
   const tidy = (): string => {
     const grid = onGrid()
     const packed = pack(grid)
@@ -249,6 +302,7 @@ export function createDesktopStore(initial: DesktopState) {
     fullscreen,
     exitFullscreen,
     focus,
+    move,
     tidy,
   }
 }

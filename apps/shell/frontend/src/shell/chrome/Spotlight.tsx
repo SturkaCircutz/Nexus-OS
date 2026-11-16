@@ -1,7 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { APP_IDS, getApp, type AppId } from '@/apps/registry'
 import { useReducedMotion } from '@/theme'
-import { SHEET, useSprings, type SpringConfig } from '@/ui'
+import { Button, EmptyState, SHEET, useSprings, type SpringConfig } from '@/ui'
 import { useDesktop, type AppInstance } from '@/wm/desktopStore'
 import type { Size } from '@/wm/layout'
 import { useAgent } from '../agent/agentStore'
@@ -277,41 +277,39 @@ function ActionBar({ appId, instance: it, onClose }: { appId: AppId; instance?: 
     <div className="nx-spotlight-actions" role="group" aria-label={`${app.label} actions`}>
       <div className="nx-spotlight-sizes">
         {app.sizes.map((size) => (
-          <button
-            key={size}
-            type="button"
-            className="chip"
-            aria-pressed={it?.size === size && it.mode !== 'minimized'}
-            onClick={() => setSize(size)}
-          >
+          <Button key={size} pressed={it?.size === size && it.mode !== 'minimized'} onClick={() => setSize(size)}>
             {size}
-          </button>
+          </Button>
         ))}
       </div>
       <div className="nx-spotlight-moves">
         {!it && (
-          <ActionChip label="open" onClick={() => (onClose(), say(store.open(appId)))} />
+          <Button variant="action" onClick={() => (onClose(), say(store.open(appId)))}>
+            open
+          </Button>
         )}
         {it?.mode === 'minimized' && (
-          <ActionChip label="restore" onClick={() => (onClose(), say(store.restore(appId)))} />
+          <Button variant="action" onClick={() => (onClose(), say(store.restore(appId)))}>
+            restore
+          </Button>
         )}
         {it && it.mode !== 'minimized' && (
-          <ActionChip label="minimize" onClick={() => say(store.minimize(appId))} />
+          <Button variant="action" onClick={() => say(store.minimize(appId))}>
+            minimize
+          </Button>
         )}
         {app.fullscreen && it?.mode !== 'fullscreen' && (
-          <ActionChip label="full" onClick={() => (onClose(), say(store.fullscreen(appId)))} />
+          <Button variant="action" onClick={() => (onClose(), say(store.fullscreen(appId)))}>
+            full
+          </Button>
         )}
-        {it && <ActionChip label="hide" onClick={() => say(store.close(appId))} />}
+        {it && (
+          <Button variant="action" onClick={() => say(store.close(appId))}>
+            hide
+          </Button>
+        )}
       </div>
     </div>
-  )
-}
-
-function ActionChip({ label, onClick }: { label: string; onClick: () => void }) {
-  return (
-    <button type="button" className="chip chip--action" onClick={onClick}>
-      {label}
-    </button>
   )
 }
 

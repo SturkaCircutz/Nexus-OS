@@ -14,7 +14,10 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    setupFiles: './src/test/setup.ts',
+    // Node 25's native storage shadows jsdom storage without a backing file.
+    execArgv: Number(process.versions.node.split('.')[0]) >= 25 ? ['--no-experimental-webstorage'] : [],
+    setupFiles: ['src/ui/testing/setup.ts'],
+    css: true,
     clearMocks: true,
   },
 })
