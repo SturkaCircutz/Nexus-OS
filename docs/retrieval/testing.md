@@ -87,7 +87,7 @@ remain separate release work. The current Tauri configuration is still a scaffol
 | --- | --- |
 | 401 | Set the Authorization bearer token to the startup value of `NEXUS_API_TOKEN` |
 | 503 on retrieval routes | Set `NEXUS_API_TOKEN`; check browser installation if the code is `browser_unavailable` |
-| `search_blocked` in live mode | Expected while live Google access is disabled; use fixture mode for the full demo |
+| `search_blocked` in live mode | Live access is disabled or Google returned an access challenge; use fixtures to test the pipeline |
 | 415 in fixture mode | Choose a result URL returned by the fixture search; arbitrary URLs cannot be fetched |
 | Missing browser executable | Run `python -m playwright install chromium --no-shell` in the correct environment |
 | Port 8000 already used | Stop the other process or launch with `--port 8001`; use that port in Swagger/curl |
@@ -131,3 +131,23 @@ Pydantic is pinned to 2.7.4 to satisfy LangGraph dependencies on Python 3.12.
 - Windows execution and live Google compatibility remain unverified.
 
 The root test runner and Windows workflow now include the AI-Core systems suite.
+
+## Pull request verification — 2026-11-16
+
+Merged `origin/main` at `deac95b` and preserved the new UI library/test harness.
+The root test command covers both retrieval and AI-Core; frontend test workers
+on Node 25 disable native experimental Web Storage so JSDOM owns browser storage.
+
+- Fresh `npm ci` completed with no audit vulnerabilities.
+- `npm test`: 149 retrieval/backend tests, 65 AI-Core tests, and 176 frontend tests passed.
+- Offline real-Chromium suite: 8 passed, including challenge-redirect error propagation.
+- Frontend TypeScript and production build passed; `pip check` passed.
+- Rebuilt macOS ARM64 sidecar and its offline smoke test passed.
+- New PR workflow runs the integration checks on Ubuntu with Python 3.12 and Node 22.
+  It has not run on GitHub yet. The Windows package workflow remains manual.
+
+The live Google attempt on 2026-11-11 reached `/sorry/index`; it did not return search
+results. A regression fix now recognizes this redirect before Chromium falls through
+to its internal error page and reports `search_blocked`, preserving destination
+restrictions. Successful live Google search and Windows execution remain release gaps.
+The personal search bar/widget prototype is locally excluded and is not part of the PR.
