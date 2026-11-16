@@ -1,0 +1,29 @@
+{
+  "request_id": "req_image_01",
+  "query": "hand gesture interface",
+  "warnings": [],
+  "duration_ms": 231,
+  "results": [
+    {
+      "id": "image_31bda712",
+      "kind": "image",
+      "title": "Hand landmark interface demonstration",
+      "url": "https://example.com/projects/gesture-interface",
+      "source_name": "Example Lab",
+      "image_url": "https://cdn.example.com/images/gesture-interface.png",
+      "thumbnail_url": "https://cdn.example.com/images/gesture-interface-thumb.png",
+      "width": 1600,
+      "height": 900,
+      "mime_type": "image/png",
+      "alt_text": "A hand controlling windows on a desktop interface.",
+      "attribution": {
+        "text": "Example Lab",
+        "url": "https://example.com/projects/gesture-interface"
+      }
+    }
+  ],
+  "page": {
+    "next_cursor": null,
+    "has_more": false
+  }
+}

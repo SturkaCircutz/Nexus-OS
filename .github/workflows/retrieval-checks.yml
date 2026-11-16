@@ -1,0 +1,47 @@
+name: Retrieval integration checks
+
+on:
+  pull_request:
+    paths:
+      - 'apps/engine/backend/**'
+      - 'apps/shell/frontend/**'
+      - 'modules/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'docs/retrieval/**'
+      - 'package*.json'
+      - 'pytest.ini'
+      - '.github/workflows/retrieval-checks.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install backend dependencies
+        run: |
+          python -m venv apps/engine/backend/.venv
+          apps/engine/backend/.venv/bin/python -m pip install -r apps/engine/backend/requirements-dev.txt
+      - run: npm ci
+      - name: Validate contracts and run backend, AI-Core, and frontend suites
+        run: npm test
+      - name: Check frontend types and production build
+        run: |
+          npm --prefix apps/shell/frontend run typecheck
+          npm run build
+      - name: Install Chromium and its system libraries
+        run: apps/engine/backend/.venv/bin/python -m playwright install --with-deps chromium --no-shell
+      - name: Test offline Chromium boundaries and fixture API
+        run: apps/engine/backend/.venv/bin/python -m pytest -m browser --run-browser

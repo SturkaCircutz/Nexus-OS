@@ -1,0 +1,4 @@
+{
+  "message": "The mock provider rate limit was reached.",
+  "retry_after_seconds": 30
+}

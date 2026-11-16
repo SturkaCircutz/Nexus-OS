@@ -1,0 +1,26 @@
+{
+  "results": [
+    {
+      "id": "web_fixture_01",
+      "kind": "web",
+      "title": "Desktop agents: a systems overview",
+      "url": "https://example.com/research/desktop-agents",
+      "source_name": "Example Research",
+      "snippet": "A fixture-backed overview of structured desktop agents.",
+      "published_at": "2026-09-18T14:00:00Z",
+      "attribution": null
+    },
+    {
+      "id": "web_fixture_02",
+      "kind": "web",
+      "title": "Building reliable search interfaces",
+      "url": "https://example.net/guides/search-interfaces",
+      "source_name": "Example Engineering",
+      "snippet": "Patterns for typed results, partial failures, and pagination.",
+      "published_at": null,
+      "attribution": null
+    }
+  ],
+  "next_cursor": "web-fixture-page-2",
+  "has_more": true
+}

@@ -1,0 +1,26 @@
+{
+  "results": [
+    {
+      "id": "web_duplicate_primary",
+      "kind": "web",
+      "title": "Primary duplicate result",
+      "url": "https://example.com/articles/duplicate",
+      "source_name": "Example",
+      "snippet": "The first ranked copy.",
+      "published_at": null,
+      "attribution": null
+    },
+    {
+      "id": "web_duplicate_secondary",
+      "kind": "web",
+      "title": "Secondary duplicate result",
+      "url": "https://EXAMPLE.com:443/articles/duplicate#section",
+      "source_name": "Example",
+      "snippet": "The same destination in a non-canonical form.",
+      "published_at": null,
+      "attribution": null
+    }
+  ],
+  "next_cursor": null,
+  "has_more": false
+}

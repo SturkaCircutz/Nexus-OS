@@ -1,0 +1,26 @@
+{
+  "request_id": "req_video_01",
+  "query": "Tauri desktop application tutorial",
+  "warnings": [],
+  "duration_ms": 267,
+  "results": [
+    {
+      "id": "video_aa122409",
+      "kind": "video",
+      "title": "Building a Desktop Application with Tauri",
+      "url": "https://video.example.com/watch/tauri-intro",
+      "source_name": "Example Video",
+      "thumbnail_url": "https://cdn.example.com/video/tauri-intro-thumb.jpg",
+      "creator": "Example Developer",
+      "duration_seconds": 842,
+      "published_at": "2026-08-04T16:30:00Z",
+      "embeddable": true,
+      "embed_url": "https://video.example.com/embed/tauri-intro",
+      "attribution": null
+    }
+  ],
+  "page": {
+    "next_cursor": null,
+    "has_more": false
+  }
+}

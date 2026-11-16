@@ -159,3 +159,9 @@ Consumed by `src-tauri` sidecar via local HTTP on port 8000.
 3. New schema field → `schemas/contracts.py` (front-compatible fields belong
    in `extensions`; unknown fields are rejected at authority boundaries).
 4. Register storage tables in `modules/storage/schema.sql`.
+
+## Public web retrieval
+
+The independent retrieval service uses Python 3.12, aiohttp, Trafilatura and headless Chromium. See the [run guide](../../../docs/retrieval/README.md), [API reference](../../../docs/retrieval/api.md), and [architecture](../../../docs/retrieval/architecture.md).
+
+Bearer-protected retrieval routes are `GET /api/v1/web/tools`, `POST /api/v1/web/search`, and `POST /api/v1/web/browse`. `/api/v1/tools` continues to describe the canonical AI-Core registry. Retrieval is not yet connected to the AI-Core policy gateway. `launcher.py` supports source and packaged startup, fixture demos, and offline self-tests.

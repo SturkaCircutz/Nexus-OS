@@ -1,0 +1,16 @@
+{
+  "query": "AI desktop assistants",
+  "locale": "en-CA",
+  "safe_search": "moderate",
+  "kinds": [
+    "web",
+    "image",
+    "video"
+  ],
+  "per_kind_limit": 5,
+  "cursors": {
+    "web": null,
+    "image": null,
+    "video": null
+  }
+}

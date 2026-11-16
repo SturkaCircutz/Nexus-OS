@@ -1,0 +1,10 @@
+{
+  "request_id": "req_error_01",
+  "error": {
+    "code": "provider_rate_limited",
+    "message": "The search provider rate limit was reached.",
+    "retryable": true,
+    "retry_after_seconds": 30,
+    "kind": "web"
+  }
+}

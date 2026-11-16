@@ -1,0 +1,16 @@
+{
+  "request_id": "req_article_01",
+  "article": {
+    "id": "article_7c9a4b31",
+    "title": "Multimodal Agents for Desktop Interaction",
+    "url": "https://example.com/research/desktop-agents",
+    "text": "This article examines how language and gesture inputs can share a structured desktop action layer.",
+    "source_name": "Example Research",
+    "author": "A. Researcher",
+    "published_at": "2026-09-18T14:00:00Z",
+    "language": "en-CA",
+    "attribution": null
+  },
+  "warnings": [],
+  "duration_ms": 312
+}

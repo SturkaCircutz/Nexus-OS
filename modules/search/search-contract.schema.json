@@ -1,0 +1,1510 @@
+{
+  "$defs": {
+    "ArticleDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Attribution"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "author": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "maxLength": 35,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published At"
+        },
+        "source_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Name"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url",
+        "text"
+      ],
+      "title": "ArticleDocument",
+      "type": "object"
+    },
+    "ArticleFetchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ArticleFetchRequest",
+      "type": "object"
+    },
+    "ArticleFetchResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "article": {
+          "$ref": "#/$defs/ArticleDocument"
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/SearchWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "article",
+        "warnings",
+        "duration_ms"
+      ],
+      "title": "ArticleFetchResponse",
+      "type": "object"
+    },
+    "Attribution": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Attribution",
+      "type": "object"
+    },
+    "FetchPageToolRequest": {
+      "additionalProperties": false,
+      "description": "URL syntax only; destination authorization belongs to the network service.",
+      "properties": {
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "FetchPageToolRequest",
+      "type": "object"
+    },
+    "FetchPageToolResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "article": {
+          "$ref": "#/$defs/PageContent"
+        },
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/SearchWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "article",
+        "warnings",
+        "duration_ms"
+      ],
+      "title": "FetchPageToolResponse",
+      "type": "object"
+    },
+    "ImageSearchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "maxLength": 35,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "safe_search": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/SafeSearchMode"
+            }
+          ],
+          "default": "moderate"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ImageSearchRequest",
+      "type": "object"
+    },
+    "ImageSearchResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "page": {
+          "$ref": "#/$defs/SearchPage"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/ImageSearchResult"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/SearchWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "query",
+        "warnings",
+        "duration_ms",
+        "results",
+        "page"
+      ],
+      "title": "ImageSearchResponse",
+      "type": "object"
+    },
+    "ImageSearchResult": {
+      "additionalProperties": false,
+      "properties": {
+        "alt_text": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text"
+        },
+        "attribution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Attribution"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "height": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "image_url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Image Url",
+          "type": "string"
+        },
+        "kind": {
+          "const": "image",
+          "enum": [
+            "image"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "pattern": "^image/[a-zA-Z0-9.+-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mime Type"
+        },
+        "source_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "thumbnail_url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Thumbnail Url",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url",
+        "source_name",
+        "kind",
+        "image_url",
+        "thumbnail_url"
+      ],
+      "title": "ImageSearchResult",
+      "type": "object"
+    },
+    "MixedSearchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "cursors": {
+          "$ref": "#/$defs/SearchCursors"
+        },
+        "kinds": {
+          "items": {
+            "$ref": "#/$defs/SearchResultKind"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Kinds",
+          "type": "array"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "maxLength": 35,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "per_kind_limit": {
+          "default": 10,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Per Kind Limit",
+          "type": "integer"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "safe_search": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/SafeSearchMode"
+            }
+          ],
+          "default": "moderate"
+        }
+      },
+      "required": [
+        "query",
+        "kinds"
+      ],
+      "title": "MixedSearchRequest",
+      "type": "object"
+    },
+    "MixedSearchResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "pages": {
+          "$ref": "#/$defs/SearchPages"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "results": {
+          "items": {
+            "discriminator": {
+              "mapping": {
+                "image": "#/$defs/ImageSearchResult",
+                "video": "#/$defs/VideoSearchResult",
+                "web": "#/$defs/WebSearchResult"
+              },
+              "propertyName": "kind"
+            },
+            "oneOf": [
+              {
+                "$ref": "#/$defs/WebSearchResult"
+              },
+              {
+                "$ref": "#/$defs/ImageSearchResult"
+              },
+              {
+                "$ref": "#/$defs/VideoSearchResult"
+              }
+            ]
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/SearchWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "query",
+        "warnings",
+        "duration_ms",
+        "results",
+        "pages"
+      ],
+      "title": "MixedSearchResponse",
+      "type": "object"
+    },
+    "PageContent": {
+      "additionalProperties": false,
+      "description": "Extracted, untrusted source text; url remains the original source URL.",
+      "properties": {
+        "attribution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Attribution"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "author": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Author"
+        },
+        "final_url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Final Url",
+          "type": "string"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "maxLength": 35,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        },
+        "original_url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Original Url",
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published At"
+        },
+        "source_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Name"
+        },
+        "text": {
+          "maxLength": 30000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url",
+        "text",
+        "original_url",
+        "final_url",
+        "truncated"
+      ],
+      "title": "PageContent",
+      "type": "object"
+    },
+    "SafeSearchMode": {
+      "enum": [
+        "off",
+        "moderate",
+        "strict"
+      ],
+      "title": "SafeSearchMode",
+      "type": "string"
+    },
+    "SearchCursors": {
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image"
+        },
+        "video": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Video"
+        },
+        "web": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Web"
+        }
+      },
+      "title": "SearchCursors",
+      "type": "object"
+    },
+    "SearchErrorCode": {
+      "enum": [
+        "invalid_request",
+        "authentication_failed",
+        "service_starting",
+        "service_unavailable",
+        "provider_not_configured",
+        "provider_timeout",
+        "provider_rate_limited",
+        "provider_failure",
+        "unsafe_url",
+        "unsupported_content",
+        "content_too_large",
+        "extraction_failed",
+        "browser_unavailable",
+        "browser_crashed",
+        "browser_timeout",
+        "browser_busy",
+        "search_blocked",
+        "fetch_timeout",
+        "fetch_failed",
+        "page_blocked",
+        "too_many_redirects",
+        "retrieval_busy",
+        "fixture_data"
+      ],
+      "title": "SearchErrorCode",
+      "type": "string"
+    },
+    "SearchErrorDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/SearchErrorCode"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchResultKind"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retry_after_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry After Seconds"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "SearchErrorDetail",
+      "type": "object"
+    },
+    "SearchErrorResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "error": {
+          "$ref": "#/$defs/SearchErrorDetail"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Request Id"
+        }
+      },
+      "required": [
+        "error"
+      ],
+      "title": "SearchErrorResponse",
+      "type": "object"
+    },
+    "SearchPage": {
+      "additionalProperties": false,
+      "properties": {
+        "has_more": {
+          "default": false,
+          "title": "Has More",
+          "type": "boolean"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Cursor"
+        }
+      },
+      "title": "SearchPage",
+      "type": "object"
+    },
+    "SearchPages": {
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchPage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "video": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchPage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "web": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchPage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "SearchPages",
+      "type": "object"
+    },
+    "SearchResultKind": {
+      "enum": [
+        "web",
+        "image",
+        "video"
+      ],
+      "title": "SearchResultKind",
+      "type": "string"
+    },
+    "SearchWarning": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "$ref": "#/$defs/SearchErrorCode"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SearchResultKind"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "message": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Message",
+          "type": "string"
+        },
+        "retry_after_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retry After Seconds"
+        },
+        "retryable": {
+          "default": false,
+          "title": "Retryable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "message"
+      ],
+      "title": "SearchWarning",
+      "type": "object"
+    },
+    "SearchWebToolRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "limit": {
+          "default": 5,
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SearchWebToolRequest",
+      "type": "object"
+    },
+    "SearchWebToolResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "page": {
+          "$ref": "#/$defs/SearchPage"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/WebSearchResult"
+          },
+          "maxItems": 10,
+          "title": "Results",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/SearchWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "query",
+        "warnings",
+        "duration_ms",
+        "results",
+        "page"
+      ],
+      "title": "SearchWebToolResponse",
+      "type": "object"
+    },
+    "VideoSearchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "maxLength": 35,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "safe_search": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/SafeSearchMode"
+            }
+          ],
+          "default": "moderate"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "VideoSearchRequest",
+      "type": "object"
+    },
+    "VideoSearchResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "page": {
+          "$ref": "#/$defs/SearchPage"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/VideoSearchResult"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/SearchWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "query",
+        "warnings",
+        "duration_ms",
+        "results",
+        "page"
+      ],
+      "title": "VideoSearchResponse",
+      "type": "object"
+    },
+    "VideoSearchResult": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Attribution"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "creator": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creator"
+        },
+        "duration_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Seconds"
+        },
+        "embed_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Embed Url"
+        },
+        "embeddable": {
+          "default": false,
+          "title": "Embeddable",
+          "type": "boolean"
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "video",
+          "enum": [
+            "video"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published At"
+        },
+        "source_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "thumbnail_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Thumbnail Url"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url",
+        "source_name",
+        "kind"
+      ],
+      "title": "VideoSearchResult",
+      "type": "object"
+    },
+    "WebSearchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "cursor": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        },
+        "limit": {
+          "default": 10,
+          "maximum": 20,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "maxLength": 35,
+              "minLength": 2,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locale"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "safe_search": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/SafeSearchMode"
+            }
+          ],
+          "default": "moderate"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "WebSearchRequest",
+      "type": "object"
+    },
+    "WebSearchResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_ms": {
+          "minimum": 0,
+          "title": "Duration Ms",
+          "type": "integer"
+        },
+        "page": {
+          "$ref": "#/$defs/SearchPage"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "request_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Request Id",
+          "type": "string"
+        },
+        "results": {
+          "items": {
+            "$ref": "#/$defs/WebSearchResult"
+          },
+          "title": "Results",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "$ref": "#/$defs/SearchWarning"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "query",
+        "warnings",
+        "duration_ms",
+        "results",
+        "page"
+      ],
+      "title": "WebSearchResponse",
+      "type": "object"
+    },
+    "WebSearchResult": {
+      "additionalProperties": false,
+      "properties": {
+        "attribution": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Attribution"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "const": "web",
+          "enum": [
+            "web"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published At"
+        },
+        "snippet": {
+          "default": "",
+          "maxLength": 2000,
+          "title": "Snippet",
+          "type": "string"
+        },
+        "source_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Name",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url",
+        "source_name",
+        "kind"
+      ],
+      "title": "WebSearchResult",
+      "type": "object"
+    }
+  },
+  "$id": "https://nexus.local/schemas/search-contract.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NEXUS Search & Discover Contracts"
+}

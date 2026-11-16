@@ -16,15 +16,41 @@ from __future__ import annotations
 
 import asyncio
 from typing import Any
+from contextlib import asynccontextmanager
+import os
 
 from fastapi import FastAPI, HTTPException
 from pydantic import ValidationError
+from fastapi.exceptions import RequestValidationError
+from agent.tools import RetrievalToolRegistry
+from search.browser import BrowserRuntime
+from search.config import create_service
+from search.api import router as retrieval_router, domain_error, validation_error, RetrievalRequestMiddleware
+from search.errors import RetrievalError
 
 from agent.core import CoreEngine, CoreRequestResult
 from api import ApiRuntime, create_v1_router, install_error_handlers
 from schemas.contracts import RequestEnvelope
 
-app = FastAPI(title="NEXUS OS Agent Brain", version="0.3.0")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    async with BrowserRuntime() as browser:
+        app.state.retrieval_browser = browser
+        app.state.retrieval_mode = os.getenv("NEXUS_RETRIEVAL_MODE", "live")
+        app.state.google_live_enabled = app.state.retrieval_mode == "live" and os.getenv("NEXUS_GOOGLE_SEARCH_ENABLED") == "1"
+        app.state.retrieval_api_token = os.getenv("NEXUS_API_TOKEN", "")
+        service = create_service(browser, mode=app.state.retrieval_mode, google_enabled=app.state.google_live_enabled)
+        app.state.retrieval_registry = RetrievalToolRegistry(service)
+        app.state.retrieval_tools = app.state.retrieval_registry.web
+        try:
+            yield
+        finally:
+            await shutdown_engine()
+
+
+app = FastAPI(title="NEXUS OS Agent Brain", version="0.3.0", lifespan=lifespan,
+              description="AI-Core runs and independent public web retrieval. "
+                          "Retrieval endpoints require NEXUS_API_TOKEN; fixtures return synthetic data.")
 
 runtime: ApiRuntime | None = None
 _react_loop = None
@@ -58,9 +84,21 @@ def _core() -> CoreEngine:
 
 app.include_router(create_v1_router(_runtime))
 install_error_handlers(app)
+core_validation_error = app.exception_handlers[RequestValidationError]
 
 
-@app.on_event("shutdown")
+async def combined_validation_error(request, error):
+    if request.url.path.startswith("/api/v1/web/"):
+        return await validation_error(request, error)
+    return await core_validation_error(request, error)
+
+
+app.include_router(retrieval_router)
+app.add_middleware(RetrievalRequestMiddleware)
+app.add_exception_handler(RetrievalError, domain_error)
+app.add_exception_handler(RequestValidationError, combined_validation_error)
+
+
 async def shutdown_engine() -> None:
     global runtime
     if runtime is not None:

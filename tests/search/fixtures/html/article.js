@@ -1,0 +1,1 @@
+document.querySelector('#content').innerHTML = '<article><h1>Rendered retrieval article</h1><p>JavaScript can populate article text after the initial HTML response arrives. A managed browser renders this source while the retrieval layer controls every network request.</p><p>The resulting text retains its source URL for the future AI agent.</p></article>';

@@ -1,0 +1,20 @@
+{
+  "results": [
+    {
+      "id": "video_fixture_01",
+      "kind": "video",
+      "title": "Introduction to desktop orchestration",
+      "url": "https://video.example.com/watch/desktop-orchestration",
+      "source_name": "Example Video",
+      "thumbnail_url": "https://cdn.example.com/video/desktop-orchestration.jpg",
+      "creator": "Example Developer",
+      "duration_seconds": 615,
+      "published_at": "2026-08-04T16:30:00Z",
+      "embeddable": false,
+      "embed_url": null,
+      "attribution": null
+    }
+  ],
+  "next_cursor": null,
+  "has_more": false
+}

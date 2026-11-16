@@ -26,8 +26,12 @@ Thumbs.db
 src-tauri/target/
 src-tauri/gen/
 
-# Local GitHub issue drafts
-/docs/search/issues/*.md
-
 # Impeccable local cache
 .impeccable/*.cache.json
+
+# Engine local state
+*.db
+*.db-shm
+*.db-wal
+.nexus_artifacts/
+.nexus_checkpoints/

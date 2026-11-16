@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import os
+import sys
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Optional
 
 BACKEND_DIR = Path(__file__).resolve().parents[1]
-REPO_ROOT = Path(__file__).resolve().parents[4]
+REPO_ROOT = Path(sys._MEIPASS) if getattr(sys, "frozen", False) else Path(__file__).resolve().parents[4]
 
 _TRUTHY = {"1", "true", "yes", "on"}
 

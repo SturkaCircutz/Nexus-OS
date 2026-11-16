@@ -1,0 +1,51 @@
+{
+  "request_id": "req_mixed_01",
+  "query": "AI desktop assistants",
+  "warnings": [
+    {
+      "code": "provider_timeout",
+      "message": "Video results are temporarily unavailable.",
+      "kind": "video",
+      "retryable": true,
+      "retry_after_seconds": 5
+    }
+  ],
+  "duration_ms": 521,
+  "results": [
+    {
+      "id": "web_47fd2231",
+      "kind": "web",
+      "title": "Designing AI-Native Desktop Assistants",
+      "url": "https://example.com/articles/ai-desktops",
+      "source_name": "Example Engineering",
+      "snippet": "Architectural patterns for context-aware desktop assistants.",
+      "published_at": null,
+      "attribution": null
+    },
+    {
+      "id": "image_a0431d91",
+      "kind": "image",
+      "title": "AI desktop assistant concept",
+      "url": "https://example.com/gallery/ai-desktop",
+      "source_name": "Example Gallery",
+      "image_url": "https://cdn.example.com/images/ai-desktop.jpg",
+      "thumbnail_url": "https://cdn.example.com/images/ai-desktop-thumb.jpg",
+      "width": 1920,
+      "height": 1080,
+      "mime_type": "image/jpeg",
+      "alt_text": "A desktop workspace organized by an AI assistant.",
+      "attribution": null
+    }
+  ],
+  "pages": {
+    "web": {
+      "next_cursor": "web-page-2",
+      "has_more": true
+    },
+    "image": {
+      "next_cursor": null,
+      "has_more": false
+    },
+    "video": null
+  }
+}

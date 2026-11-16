@@ -86,3 +86,5 @@ npm run build     # vite build
   chains advance one `act()` per tick (React flushes effects at act exit).
 - Pure logic (`wm/layout`, springs, command parsing, `wm/desktopStore`) is tested
   without DOM; components get RTL interaction/keyboard tests.
+
+`npm run test:run` is an alias used by the root retrieval/AI-Core validation runner. Generated search contracts are covered by `src/test/search-contract.test.tsx`.
