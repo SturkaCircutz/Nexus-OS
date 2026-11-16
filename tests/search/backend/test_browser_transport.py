@@ -96,3 +96,30 @@ async def test_google_live_access_is_disabled_before_navigation():
     with pytest.raises(RetrievalError) as caught:
         await GoogleSearchAdapter(Renderer()).search(SearchWebToolRequest(query="news"))
     assert caught.value.detail.code == SearchErrorCode.SEARCH_BLOCKED
+
+
+@pytest.mark.parametrize("destination", ["https://www.google.com/sorry/index?continue=search",
+                                         "https://consent.google.com/m"])
+async def test_google_challenge_redirect_is_reported_before_browser_fallthrough(destination):
+    class RedirectFetcher:
+        async def resource(self, *args, **kwargs):
+            return ResourceResponse(302, {"location": destination}, b"")
+
+    class Renderer:
+        async def render(self, url):
+            broker = BrowserRequestBroker(RedirectFetcher())
+            route = Route(url)
+            await broker.handle(route)
+            assert route.aborted and route.result is None
+            broker.raise_if_failed()
+
+    with pytest.raises(RetrievalError) as caught:
+        await GoogleSearchAdapter(Renderer(), enabled=True).search(SearchWebToolRequest(query="test"))
+    assert caught.value.detail.code == SearchErrorCode.SEARCH_BLOCKED
+
+
+def test_challenge_detection_requires_a_known_google_host():
+    from search.google import is_google_access_challenge
+    assert not is_google_access_challenge("https://example.org/sorry/index")
+    assert not is_google_access_challenge("https://www.google.com.example.org/sorry/index")
+    assert not is_google_access_challenge("https://www.google.com/search")

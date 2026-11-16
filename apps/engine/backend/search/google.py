@@ -17,6 +17,14 @@ class BrowserSearchAdapter(Protocol):
     async def search(self, request: SearchWebToolRequest) -> SearchWebToolResponse: ...
 
 
+def is_google_access_challenge(url: str) -> bool:
+    parsed = urlsplit(url)
+    return parsed.hostname == "consent.google.com" or (
+        parsed.hostname in {"google.com", "www.google.com"}
+        and (parsed.path == "/sorry" or parsed.path.startswith("/sorry/"))
+    )
+
+
 def parse_results(body: bytes, final_url: str, limit: int) -> list[WebSearchResult]:
     try:
         tree = html.fromstring(body, parser=html.HTMLParser(no_network=True, encoding="utf-8"))
@@ -24,7 +32,7 @@ def parse_results(body: bytes, final_url: str, limit: int) -> list[WebSearchResu
         raise RetrievalError(SearchErrorCode.EXTRACTION_FAILED, "Search page could not be parsed.") from None
     title = " ".join(tree.xpath("//title/text()")).lower()
     parsed = urlsplit(final_url)
-    if (parsed.hostname == "consent.google.com" or parsed.path.startswith("/sorry")
+    if (is_google_access_challenge(final_url)
             or "before you continue" in title or "unusual traffic" in title
             or tree.xpath('//form[contains(@action,"/sorry/")] | //*[@id="captcha-form"]')):
         raise RetrievalError(SearchErrorCode.SEARCH_BLOCKED, "Search requires consent or an access challenge.")

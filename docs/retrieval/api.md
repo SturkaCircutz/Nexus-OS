@@ -40,7 +40,10 @@ sites. Both successful search and page responses contain a `fixture_data` warnin
 
 `NEXUS_GOOGLE_SEARCH_ENABLED=1` enables the Google adapter only in live mode.
 Leave it unset unless applicable permission for automated Google access exists.
-The flag is configuration, not permission. No live Google smoke test has been run.
+The flag is configuration, not permission. A live test on 2026-11-11 was redirected
+to Google's `/sorry/index` access challenge; successful live retrieval remains unverified.
+Challenge redirects now return `search_blocked` before Chromium reaches an internal
+error page. The tool does not bypass challenges or substitute fixture results.
 See [Google's machine-generated traffic policy](https://developers.google.com/search/docs/essentials/spam-policies#machine-generated-traffic).
 
 The desktop team should generate a per-session token, pass it to the backend, and

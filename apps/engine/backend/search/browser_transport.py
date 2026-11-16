@@ -5,6 +5,7 @@ import asyncio
 from playwright.async_api import Error as PlaywrightError, TimeoutError as PlaywrightTimeout
 
 from search.errors import RetrievalError
+from search.google import is_google_access_challenge
 from search.http import DownloadedPage, PublicHttpFetcher
 from search.models import SearchErrorCode
 from search.network import public_url
@@ -51,6 +52,11 @@ class BrowserRequestBroker:
                 if self.bytes > self.max_bytes:
                     raise RetrievalError(SearchErrorCode.CONTENT_TOO_LARGE, "Browser byte budget exceeded.")
                 if request.resource_type == "document":
+                    # Redirects fulfilled by Playwright can leave the interception
+                    # path. Recognize access challenges before Chromium falls
+                    # through to the deny proxy and displays chrome-error://.
+                    if result.status in {301, 302, 303, 307, 308} and is_google_access_challenge(result.headers.get("location", "")):
+                        raise RetrievalError(SearchErrorCode.PAGE_BLOCKED, "Search requires consent or an access challenge.")
                     if result.status in {401, 402, 403, 429}:
                         raise RetrievalError(SearchErrorCode.PAGE_BLOCKED, "Page access is restricted.")
                     if result.status >= 400:

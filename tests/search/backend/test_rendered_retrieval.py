@@ -85,3 +85,22 @@ async def test_direct_browser_network_falls_into_deny_proxy():
             await page.route("**/*", lambda route: route.continue_())
             with pytest.raises(Exception):
                 await page.goto("https://example.org/", timeout=3000)
+
+
+@pytest.mark.browser
+async def test_real_browser_google_challenge_redirect_reports_search_blocked():
+    class ChallengeFetcher:
+        limits = FetchLimits()
+        calls = 0
+        async def resource(self, url, **kwargs):
+            self.calls += 1
+            return ResourceResponse(302, {"location": "https://www.google.com/sorry/index"}, b"")
+
+    fetcher = ChallengeFetcher()
+    async with BrowserRuntime() as runtime:
+        adapter = GoogleSearchAdapter(BrowserPageRenderer(runtime, fetcher), enabled=True)
+        with pytest.raises(RetrievalError) as caught:
+            await adapter.search(SearchWebToolRequest(query="fixture challenge"))
+        assert caught.value.detail.code == SearchErrorCode.SEARCH_BLOCKED
+        assert fetcher.calls == 1
+        assert runtime.active_contexts == 0

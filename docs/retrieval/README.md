@@ -8,7 +8,8 @@ gateway and desktop UI remains a separate workstream.
 
 The fastest complete demonstration uses **synthetic fixtures with real Chromium**.
 Live page retrieval works separately. Live Google search is disabled by default
-and has not been validated against Google's current result layout.
+and a live test encountered Google's access challenge. Successful live search has
+not been verified; the fixture demo does not establish live provider availability.
 
 ## Start the interactive API
 
@@ -115,7 +116,7 @@ Chromium but no AI model, account login, or search API key.
 | Authenticated retrieval API and Swagger | Implemented |
 | Public-only HTTP page retrieval and text extraction | Implemented; public-page smoke checks performed |
 | Managed Chromium and filtered JavaScript rendering | Implemented; local integration tests and a public-page rendering check performed |
-| Google result parser and adapter | Implemented against synthetic fixtures; live compatibility unverified |
+| Google result parser and adapter | Fixture-tested; live attempt blocked by Google access challenge |
 | Agent reasoning, confirmation, run streaming, chat UI | AI-Core and shell implementation merged from main; retrieval gateway integration pending |
 | Native backend package | macOS ARM64 package smoke-tested |
 | Windows CI/package and Tauri MSI | Workflow prepared; Windows execution and Tauri integration remain pending |
