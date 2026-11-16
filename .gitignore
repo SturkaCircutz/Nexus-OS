@@ -28,3 +28,6 @@ src-tauri/gen/
 
 # Local GitHub issue drafts
 /docs/search/issues/*.md
+
+# Impeccable local cache
+.impeccable/*.cache.json

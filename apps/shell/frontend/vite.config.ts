@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { fileURLToPath, URL } from 'node:url'
@@ -15,10 +16,13 @@ export default defineConfig({
       ),
     },
   },
-  test: {
-    include: ['src/**/*.test.{ts,tsx}'],
-  },
   server: {
     port: 5173,
+  },
+  test: {
+    include: ['src/**/*.test.{ts,tsx}'],
+    environment: 'jsdom',
+    setupFiles: ['src/ui/testing/setup.ts'],
+    css: true,
   },
 })

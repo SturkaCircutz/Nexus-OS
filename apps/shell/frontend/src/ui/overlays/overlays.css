@@ -1,0 +1,139 @@
+/* L3 overlays. Overlays are the system's: they own their exit and hand focus back.
+   Dialogs are solid paper over a scrim; glass never appears in an overlay. */
+
+.nx-empty {
+  display: grid;
+  place-content: center;
+  min-height: 60px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* --- Error boundary fallback --- */
+
+.nx-error {
+  height: 100%;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s-sm);
+  padding: var(--s-md);
+  text-align: center;
+}
+
+.nx-error-mark {
+  font: 600 16px var(--mono);
+  color: var(--ink);
+}
+
+.nx-error-text {
+  white-space: normal;
+  color: var(--muted);
+}
+
+/* --- Dialog --- */
+
+.nx-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-spotlight);
+  display: grid;
+  place-items: center;
+}
+
+.nx-dialog-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--scrim);
+}
+
+.nx-dialog-panel {
+  position: relative;
+  min-width: 280px;
+  max-width: min(480px, calc(100vw - 48px));
+  max-height: calc(100vh - var(--chrome-top) - var(--chrome-bottom));
+  overflow: auto;
+  padding: var(--s-lg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sheet);
+  background: var(--surface);
+  box-shadow:
+    0 1px 2px var(--shadow),
+    0 16px 40px var(--shadow-float);
+  will-change: transform, opacity;
+}
+
+/* --- Toasts --- */
+
+.nx-toasts {
+  position: fixed;
+  top: calc(var(--chrome-top) + var(--s-sm));
+  right: var(--s-lg);
+  z-index: var(--z-agent);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-sm);
+  max-width: min(320px, calc(100vw - 32px));
+}
+
+.nx-toast {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-bubble);
+  background: var(--surface);
+  box-shadow:
+    0 1px 2px var(--shadow),
+    0 16px 40px var(--shadow-float);
+  white-space: normal;
+  color: var(--ink);
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity var(--dur-toast) var(--ease),
+    transform var(--dur-toast) var(--ease);
+}
+
+/* The bubble's typing trick: hold the final size while the text arrives. */
+.nx-toast-rest {
+  visibility: hidden;
+}
+
+.nx-toast[data-leaving] {
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+}
+
+.nx-toast--error {
+  border-color: var(--ink);
+}
+
+.nx-toast-mark {
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+/* --- Confirm panel --- */
+
+.nx-confirm {
+  display: grid;
+  gap: var(--s-md);
+}
+
+.nx-confirm-message {
+  white-space: normal;
+}
+
+.nx-confirm-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-sm);
+}
+
+/* Reduced motion: fades, no movement. */
+@media (prefers-reduced-motion: reduce) {
+  .nx-toast,
+  .nx-toast[data-leaving] {
+    transform: none;
+  }
+}

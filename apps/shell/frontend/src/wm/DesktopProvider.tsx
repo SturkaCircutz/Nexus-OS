@@ -21,7 +21,7 @@ import {
 import type { DesktopSession } from '@/types/WindowState'
 import type { DesktopStoreAPI } from '@/wm/DesktopStoreAPI'
 import { DesktopStoreContextProvider } from '@/wm/DesktopStoreContext'
-import { createDesktopStore, type DesktopStore } from '@/wm/desktopStore'
+import { createDesktopStore, type DesktopStore } from '@/wm/windowStore'
 import {
   createSessionPersister,
   getDefaultStorage,

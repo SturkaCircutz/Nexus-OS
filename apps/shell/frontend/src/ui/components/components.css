@@ -1,0 +1,459 @@
+/* L2 components. Token values only — no raw hex/px (see ui/tokens/tokens.css).
+   Same-path rule: every hover/press state here is symmetric; nothing animates
+   ambiently while resting. */
+
+/* --- Typography --- */
+
+.nx-text {
+  margin: 0;
+  font: 400 var(--fs-body)/1.5 var(--sans);
+  color: var(--ink);
+}
+
+.nx-bubble-text {
+  margin: 0;
+  font: 400 var(--fs-bubble)/1.45 var(--sans);
+  color: var(--ink);
+}
+
+.nx-mono {
+  margin: 0;
+  font: 400 var(--fs-mono)/1.7 var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: pre;
+}
+
+.nx-label {
+  font: 400 var(--fs-label)/1 var(--mono);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+}
+
+.nx-micro {
+  font: 400 var(--fs-micro)/1 var(--mono);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* --- Chip / Button (the pressable unit) --- */
+
+.chip {
+  min-height: 30px;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-chip);
+  background: transparent;
+  font: var(--fs-label) var(--mono);
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background-color var(--dur) var(--ease),
+    transform var(--dur-fast) ease-out;
+}
+
+/* Feedback starts on pointer-down, not on release. */
+.chip:active:not(:disabled),
+.nx-press:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.nx-press {
+  transition:
+    background-color var(--dur) var(--ease),
+    transform var(--dur-fast) ease-out;
+}
+
+.chip:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--surface);
+}
+
+.chip:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.chip--action {
+  min-width: 52px;
+  color: var(--accent);
+}
+
+.nx-icon-btn {
+  min-width: 30px;
+  display: inline-grid;
+  place-items: center;
+  padding: 4px 6px;
+}
+
+/* --- Markers --- */
+
+.nx-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 0;
+  width: 100%;
+}
+
+.nx-divider--v {
+  border-top: none;
+  border-left: 1px solid var(--line);
+  width: auto;
+  height: 18px;
+  align-self: center;
+}
+
+.nx-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  font: var(--fs-label) var(--mono);
+  color: var(--muted);
+  background: transparent;
+}
+
+.nx-badge--accent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.nx-kbd {
+  display: inline-block;
+  min-width: 18px;
+  margin-right: 3px;
+  padding: 1px 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-key);
+  font: inherit;
+  text-align: center;
+}
+
+/* --- Status --- */
+
+.nx-spinner-label {
+  color: var(--muted);
+  margin-left: 6px;
+}
+
+.nx-loading {
+  height: 100%;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--s-sm);
+  color: var(--muted);
+}
+
+/* --- Fields --- */
+
+.nx-input,
+.nx-textarea {
+  border: none;
+  background: transparent;
+  font: 400 var(--fs-input)/1.4 var(--sans);
+  color: var(--ink);
+  padding: 0;
+  min-width: 0;
+}
+
+.nx-textarea {
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  resize: none;
+}
+
+.nx-input:focus,
+.nx-textarea:focus {
+  outline: none;
+}
+
+.nx-input::placeholder,
+.nx-textarea::placeholder {
+  color: var(--muted);
+}
+
+.nx-search {
+  display: flex;
+  align-items: center;
+  gap: var(--s-md);
+}
+
+.nx-search-mark {
+  font: var(--fs-input) var(--mono);
+  color: var(--accent);
+}
+
+.nx-search-hint {
+  color: var(--muted);
+  font-size: var(--fs-micro);
+}
+
+/* --- Character-marked controls --- */
+
+.nx-mark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-sm);
+  padding: 4px 6px;
+  border: none;
+  border-radius: var(--radius-chip);
+  background: transparent;
+  font: var(--fs-mono) var(--mono);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+}
+
+.nx-mark:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+.nx-mark:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.nx-mark-glyph {
+  color: var(--muted);
+  white-space: pre;
+}
+
+.nx-mark:hover:not(:disabled) .nx-mark-glyph {
+  color: var(--ink);
+}
+
+.nx-mark[aria-checked='true'] .nx-mark-glyph,
+.nx-mark[aria-checked='mixed'] .nx-mark-glyph {
+  color: var(--accent);
+}
+
+.nx-mark-label {
+  font: 400 var(--fs-body)/1.5 var(--sans);
+}
+
+.nx-mark-state {
+  font: var(--fs-micro) var(--mono);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.nx-radiogroup {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* --- Popover / Select --- */
+
+.nx-pop {
+  position: relative;
+}
+
+.nx-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  z-index: 1;
+  min-width: 172px;
+  padding: var(--s-md);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow:
+    0 1px 2px var(--shadow),
+    0 16px 40px var(--shadow-float);
+  animation: nx-popover-in var(--dur-pop) var(--ease);
+  transform-origin: top;
+}
+
+.nx-popover[data-align='end'] {
+  right: 0;
+  transform-origin: top right;
+}
+
+.nx-popover[data-align='start'] {
+  left: 0;
+  transform-origin: top left;
+}
+
+@keyframes nx-popover-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+}
+
+.nx-select {
+  padding: var(--s-xs);
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.nx-select-btn {
+  justify-content: space-between;
+  gap: var(--s-sm);
+  min-width: 96px;
+}
+
+.nx-select-value {
+  font: var(--fs-label) var(--mono);
+}
+
+.nx-select-caret {
+  color: var(--muted);
+}
+
+.nx-select-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nx-select-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 4px 8px;
+  border-radius: var(--radius-chip);
+  font: var(--fs-label) var(--mono);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.nx-select-option[data-active] {
+  background: var(--bg);
+}
+
+.nx-select-option[aria-selected='true'] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.nx-select-mark {
+  color: inherit;
+  white-space: pre;
+}
+
+/* --- Containers --- */
+
+.nx-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 1px 2px var(--shadow),
+    0 8px 24px var(--shadow);
+  padding: var(--s-card);
+  transition:
+    background-color var(--dur-slow) ease,
+    border-color var(--dur-slow) ease;
+}
+
+.nx-panel--flush {
+  padding: 0;
+}
+
+.nx-panel-label {
+  margin-bottom: var(--s-md);
+}
+
+.nx-section {
+  display: block;
+}
+
+.nx-section-head {
+  display: flex;
+  align-items: center;
+  gap: var(--s-md);
+  margin-bottom: var(--s-sm);
+}
+
+.nx-section-title {
+  color: var(--muted);
+  flex: none;
+}
+
+.nx-section-rule {
+  flex: 1;
+}
+
+.nx-scroll {
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Fade masks at the edges, only where there is more to see. */
+.nx-scroll::before,
+.nx-scroll::after {
+  content: '';
+  position: sticky;
+  display: block;
+  height: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.nx-scroll::before {
+  top: 0;
+  background: linear-gradient(var(--surface), transparent);
+  box-shadow: 0 1px 0 var(--line);
+}
+
+.nx-scroll::after {
+  bottom: 0;
+  background: linear-gradient(transparent, var(--surface));
+}
+
+.nx-scroll[data-can-top]::before,
+.nx-scroll[data-can-bottom]::after {
+  height: 12px;
+  opacity: 1;
+}
+
+/* --- Tabs --- */
+
+.nx-tablist {
+  display: flex;
+  gap: 2px;
+}
+
+.nx-tab {
+  min-height: 30px;
+  padding: 4px 10px;
+  border: none;
+  border-radius: var(--radius-chip);
+  background: transparent;
+  font: var(--fs-label) var(--mono);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.nx-tab:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+
+.nx-tab[aria-selected='true'] {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.nx-tabpanel {
+  min-height: 0;
+}
+
+/* Reduced motion: nothing here moves positionally; keep it that way. */
+@media (prefers-reduced-motion: reduce) {
+  .nx-popover {
+    animation: none;
+  }
+}

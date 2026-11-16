@@ -1,0 +1,63 @@
+/* L5 templates: the ready-made layouts apps compose from. */
+
+.nx-widget {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Fullscreen app --- */
+
+.nx-app {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-md);
+}
+
+.nx-app-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-md);
+  padding: 2px 0;
+}
+
+.nx-app-head-title {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-md);
+  min-width: 0;
+}
+
+.nx-app-label {
+  color: var(--ink);
+}
+
+.nx-app-meta {
+  font: var(--fs-micro) var(--mono);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nx-app-actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--s-sm);
+}
+
+.nx-app-rule {
+  flex: none;
+}
+
+.nx-app-body {
+  flex: 1;
+  min-height: 0;
+}

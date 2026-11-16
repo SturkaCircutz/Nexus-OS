@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { useDesktopStore } from '@/wm/DesktopStoreContext'
 import { DesktopProvider, useDesktopStoreHandle } from '@/wm/DesktopProvider'
-import { createSeedSession } from '@/wm/desktopStore'
+import { createSeedSession } from '@/wm/windowStore'
 import {
   DEFAULT_SAVE_DEBOUNCE_MS,
   loadSession,

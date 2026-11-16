@@ -47,19 +47,32 @@ behind the widgets.
 ## Adding / Removing Widgets
 - **Primary — ask the agent:** e.g. "show my notes", "hide the clock". The agent
   picks a free cell and the widget builds itself in.
-- **Fallback — widget tray:** a hidden tray opened by a key shortcut lists available
-  widgets; picking one auto-places it in the next free cell.
-- *(proposal)* The agent input is a single quiet prompt line, not a chat window.
+- **Fallback — Spotlight:** ⌘/Ctrl+K (or `/`, or clicking the avatar) opens one
+  input that both asks the agent and lists every app with its state, sizes and
+  open/minimize/fullscreen actions. It replaced the earlier widget tray.
+- The agent replies in a short bubble beside its avatar, not a chat window.
+
+## Shell Chrome (Phase 2)
+- **Menu bar:** one quiet glass line at the top: agent status, mic, engine, ask,
+  theme, avatar position, clock.
+- **Dock:** hidden until needed. It appears when an app is minimized, when the
+  pointer reaches the bottom edge, or on ⌘/Ctrl+. — so the main screen still has
+  no taskbar.
+- **Fullscreen:** an app can grow out of its cell to fill the stage and return to
+  the same cell (Esc).
+- **Agent avatar:** an ASCII stand-in face that can be dragged or flicked to one of
+  seven resting spots. At the center spot the grid dims to focus on the agent.
+- Glass is only for this floating chrome; widgets stay flat.
 
 ## Widgets
 Existing stubs, all following the shared style: Clock (built), Notes, Files,
 Terminal, System Monitor.
 
 ## Open Questions for Team Lead
-- Is the agent prompt always visible, or summoned by a key?
+- ~~Is the agent prompt always visible, or summoned by a key?~~ Summoned (Spotlight).
 - What happens when the grid is full?
-- Do any apps ever need a full-screen / focused view beyond the grid?
-- Exact key shortcut for the widget tray.
+- ~~Do any apps ever need a full-screen / focused view beyond the grid?~~ Yes, fullscreen.
+- ~~Exact key shortcut for the widget tray.~~ ⌘/Ctrl+K (tray merged into Spotlight).
 - Does "the colors can change" mean users pick the dot color, or that the dots shift
   color on their own (a gradient or slow drift)?
 - Should widget cards also switch between light and dark surfaces? (Assumed yes.)

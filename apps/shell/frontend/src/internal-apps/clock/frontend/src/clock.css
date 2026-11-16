@@ -61,7 +61,7 @@
 
 .nexus-clock-dial {
   fill: var(--nexus-bg, #0b0c10);
-  stroke: #45a29e;
+  stroke: var(--line, #45a29e);
   stroke-width: 1.5;
 }
 

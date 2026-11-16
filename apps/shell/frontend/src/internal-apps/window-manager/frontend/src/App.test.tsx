@@ -9,7 +9,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 
 import { WindowManagerWidget } from '@/internal-apps/window-manager/frontend/src/App'
 import { DesktopProvider } from '@/wm/DesktopProvider'
-import { createSeedSession } from '@/wm/desktopStore'
+import { createSeedSession } from '@/wm/windowStore'
 
 afterEach(() => {
   cleanup()

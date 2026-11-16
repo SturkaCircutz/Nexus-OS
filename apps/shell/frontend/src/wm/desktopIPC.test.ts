@@ -5,7 +5,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { DesktopSession } from '@/types/WindowState'
-import { createDesktopStore, createSeedSession } from '@/wm/desktopStore'
+import { createDesktopStore, createSeedSession } from '@/wm/windowStore'
 import { createDesktopIPCHandler } from '@/wm/desktopIPC'
 import type { DesktopStoreHandle } from '@/wm/DesktopProvider'
 import {

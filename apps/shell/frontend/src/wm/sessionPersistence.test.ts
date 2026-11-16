@@ -12,7 +12,7 @@ import {
   createSeedSession,
   type DesktopStore,
   type DesktopStoreOptions,
-} from './desktopStore'
+} from './windowStore'
 import { createMockDesktopStore } from './mockDesktopStore'
 import {
   clearSavedSession,

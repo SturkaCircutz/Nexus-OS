@@ -1,0 +1,24 @@
+.w-notes {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  resize: none;
+  padding: 2px 0;
+  font: 14px/1.5 var(--sans);
+  color: var(--ink);
+}
+
+.w-notes::placeholder {
+  color: var(--muted);
+}
+
+.w-notes:focus {
+  outline: none;
+}
+
+.w-notes:focus-visible {
+  box-shadow: 0 1px 0 var(--accent);
+}

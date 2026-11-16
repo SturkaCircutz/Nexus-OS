@@ -9,7 +9,7 @@ import { act, cleanup, render } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { DesktopProvider } from '@/wm/DesktopProvider'
-import { createSeedSession } from '@/wm/desktopStore'
+import { createSeedSession } from '@/wm/windowStore'
 import {
   IPC_REQUEST_EVENT,
   SYNC_DEBOUNCE_MS,

@@ -1,4 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from 'react'
+import type { AppProps } from '@/apps/types'
+import type { Size } from '@/wm/layout'
 import './clock.css'
 
 export type ClockSize = 'small' | 'medium' | 'large'
@@ -8,6 +10,13 @@ export const CLOCK_GRID_SIZES: Record<ClockSize, { w: number; h: number }> = {
   small: { w: 1, h: 1 },
   medium: { w: 2, h: 1 },
   large: { w: 2, h: 2 },
+}
+
+const CLOCK_SIZE: Partial<Record<Size, ClockSize>> = { '1x1': 'small', '2x1': 'medium', '2x2': 'large' }
+
+/** Shell entry point: maps the grid size to a clock layout. */
+export function ClockApp({ size }: AppProps) {
+  return <ClockWidget size={CLOCK_SIZE[size] ?? 'large'} />
 }
 
 interface ClockWidgetProps {

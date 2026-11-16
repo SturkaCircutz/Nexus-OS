@@ -14,7 +14,7 @@ import {
   Z_INDEX_RENUMBER_THRESHOLD,
   type DesktopStore,
   type DesktopStoreOptions,
-} from './desktopStore'
+} from './windowStore'
 import { createMockDesktopStore } from './mockDesktopStore'
 
 type StoreFactory = (options?: DesktopStoreOptions) => DesktopStore
