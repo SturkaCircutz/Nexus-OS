@@ -11,6 +11,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@nexus/window-state": ["../../../modules/window-state/types.ts"],
+      "@nexus/ipc": ["../../../modules/ipc/contract.ts"],
       "@hooks/*": ["src/hooks/*"],
       "@internal-apps/*": ["src/internal-apps/*"],
       "@types/*": ["src/types/*"],

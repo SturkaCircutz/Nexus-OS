@@ -1,22 +1,24 @@
-export type IPCCommand =
-  | 'get_desktop_state'
-  | 'open_app'
-  | 'close_app'
-  | 'move_window'
-  | 'resize_window'
-  | 'set_window_mode'
-  | 'switch_workspace'
-  | 'search_web'
-  | 'fetch_article'
-  | 'persist_workspace'
+/**
+ * Shell re-export of the shared IPC contract (modules/ipc/contract.ts).
+ * Prefer importing from `@nexus/ipc` in new code.
+ */
 
-export interface IPCRequest {
-  command: IPCCommand
-  args: Record<string, unknown>
-}
+export type {
+  FetchArticleArgs,
+  GetDesktopStateArgs,
+  IPCArgsMap,
+  IPCCommand,
+  IPCRequest,
+  IPCResponse,
+  MoveWindowArgs,
+  OpenAppArgs,
+  PersistWorkspaceArgs,
+  ResizeWindowArgs,
+  SearchWebArgs,
+  SetWindowModeArgs,
+  SwitchWorkspaceArgs,
+  WMIPCCommand,
+  WindowIdArgs,
+} from '@nexus/ipc'
 
-export interface IPCResponse {
-  success: boolean
-  data?: unknown
-  error?: string
-}
+export { WM_IPC_COMMANDS } from '@nexus/ipc'
