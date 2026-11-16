@@ -1,5 +1,24 @@
 import { describe, expect, it } from 'vitest'
-import { COLS, ROWS, SIZE_DIMS, SIZE_ORDER, fits, findSlot, intersecting, isSize, offset, pack, snapToCell, span } from './layout'
+import {
+  CELL,
+  COLS,
+  GAP,
+  GRID_H,
+  GRID_W,
+  MAX_CELL_STRETCH,
+  ROWS,
+  SIZE_DIMS,
+  SIZE_ORDER,
+  fitGrid,
+  fits,
+  findSlot,
+  intersecting,
+  isSize,
+  offset,
+  pack,
+  snapToCell,
+  span,
+} from './layout'
 
 // Pure grid logic: every widget placement decision in the shell runs through these.
 
@@ -13,6 +32,11 @@ describe('grid math', () => {
     expect(offset(2)).toBe(352) // 2 * (160 + 16)
   })
 
+  it('measures spans and offsets for stretched cells', () => {
+    expect(span(2, 200)).toBe(416) // 2 * 200 + 16
+    expect(offset(3, 200)).toBe(648) // 3 * (200 + 16)
+  })
+
   it('sizes the board and orders sizes smallest to largest', () => {
     expect(COLS).toBe(6)
     expect(ROWS).toBe(4)
@@ -24,6 +48,52 @@ describe('grid math', () => {
     expect(isSize('2x2')).toBe(true)
     expect(isSize('3x3')).toBe(false)
     expect(isSize(42)).toBe(false)
+  })
+})
+
+describe('fitGrid', () => {
+  // The grid fills the stage it is given: cells keep their 160px design box as a
+  // floor and stretch (up to MAX_CELL_STRETCH) along whichever axis has room left.
+
+  const physical = (g: ReturnType<typeof fitGrid>) => ({
+    w: (COLS * g.cellW + (COLS - 1) * GAP) * g.scale,
+    h: (ROWS * g.cellH + (ROWS - 1) * GAP) * g.scale,
+  })
+
+  it('is the design board, unscaled, when the stage is exactly that size', () => {
+    expect(fitGrid(GRID_W, GRID_H)).toEqual({ scale: 1, cellW: CELL, cellH: CELL })
+  })
+
+  it('stretches cells sideways in a wide window instead of leaving empty bands', () => {
+    const g = fitGrid(1872, 540) // a 1920×700 window minus chrome and padding
+    expect(g.cellH).toBe(CELL) // height is the tight axis: cells keep their design height
+    expect(g.cellW).toBeGreaterThan(CELL)
+    expect(physical(g).h).toBeCloseTo(540)
+  })
+
+  it('stretches cells downward in a tall window', () => {
+    const g = fitGrid(752, 700)
+    expect(g.cellW).toBe(CELL)
+    expect(g.cellH).toBeGreaterThan(CELL)
+    expect(physical(g).w).toBeCloseTo(752)
+    expect(physical(g).h).toBeCloseTo(700)
+  })
+
+  it('never stretches a cell past the cap, and never shrinks one below the design box', () => {
+    for (const [w, h] of [[4000, 300], [400, 4000], [5000, 5000], [500, 400]]) {
+      const g = fitGrid(w, h)
+      for (const c of [g.cellW, g.cellH]) {
+        expect(c).toBeGreaterThanOrEqual(CELL)
+        expect(c).toBeLessThanOrEqual(CELL * MAX_CELL_STRETCH)
+      }
+      expect(physical(g).w).toBeLessThanOrEqual(w + 0.5)
+      expect(physical(g).h).toBeLessThanOrEqual(h + 0.5)
+    }
+  })
+
+  it('zooms the board out only when the stage is smaller than the design board', () => {
+    expect(fitGrid(GRID_W / 2, GRID_H).scale).toBeCloseTo(0.5)
+    expect(fitGrid(GRID_W * 1.2, GRID_H * 1.2).scale).toBeCloseTo(1.2)
   })
 })
 
@@ -125,6 +195,13 @@ describe('snapToCell', () => {
   it('clamps so the widget always stays on the board', () => {
     expect(snapToCell(-90, -90, 1, 1)).toEqual({ col: 0, row: 0 })
     expect(snapToCell(10_000, 10_000, 2, 2)).toEqual({ col: COLS - 2, row: ROWS - 2 })
+  })
+
+  it('snaps on the stretched pitch of each axis', () => {
+    // 240-wide cells: pitch 256 across, 176 down.
+    expect(snapToCell(250, 0, 1, 1, 240, 160)).toEqual({ col: 1, row: 0 })
+    expect(snapToCell(120, 0, 1, 1, 240, 160)).toEqual({ col: 0, row: 0 })
+    expect(snapToCell(0, 100, 1, 1, 240, 160)).toEqual({ col: 0, row: 1 })
   })
 })
 

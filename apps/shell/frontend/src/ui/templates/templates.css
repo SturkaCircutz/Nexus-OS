@@ -61,3 +61,62 @@
   flex: 1;
   min-height: 0;
 }
+
+/* --- Settings --- */
+
+/* The outer box is a ScrollArea (fade masks are its ::before/::after), so the
+   flex column lives one level in — gaps never land around the masks. */
+.nx-settings {
+  height: 100%;
+  min-height: 0;
+  color: var(--ink);
+}
+
+.nx-settings-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-lg);
+}
+
+.nx-settings-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-md);
+}
+
+/* Label/hint and control share a line when there is room, and wrap when not. */
+.nx-setting {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  column-gap: var(--s-lg);
+  row-gap: var(--s-xs);
+}
+
+.nx-setting-text {
+  flex: 1 1 8em;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nx-setting-label {
+  font: 400 var(--fs-body)/1.5 var(--sans);
+  color: var(--ink);
+}
+
+.nx-setting-hint {
+  font: var(--fs-micro) var(--mono);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.nx-setting-control {
+  flex: none;
+  max-width: 100%;
+  font: var(--fs-mono) var(--mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}

@@ -13,8 +13,13 @@
 > Still open (in dependency order): wire `engineClient` into `Desktop` per doc 07
 > behind `NEXUS_ENGINE_URL` (the Phase-2 wiring half of D-10); rebuild Spotlight fully
 > on the primitives with zero visual change; `VideoPlayer` / `ArticleReader` /
-> `SearchResults` info widgets once the engine emits typed payloads; Settings /
-> Assistant app templates; retire the `--nexus-*` token aliases (Phase 4).
+> `SearchResults` info widgets once the engine emits typed payloads; the Assistant
+> app template.
+>
+> Since landed: `SettingsTemplate` (+ `SettingsSection` / `SettingsRow`) with the
+> settings widget ported onto it; the `--nexus-*` token aliases are retired (the
+> clock now reads `--ink` / `--accent` / `--surface`); the system monitor no longer
+> shows invented readings.
 >
 > Original scope note: a reusable component/token/motion foundation for every future
 > app, widget, overlay and system surface in the shell. It does **not** touch the
@@ -65,7 +70,7 @@ are partially stale (see 1.4).
 | Entry | `Desktop` = ThemeProvider → DesktopProvider → AgentProvider | `shell/Desktop.tsx` |
 | Background | Canvas dot field, cursor-repulsion springs, rAF loop sleeps when settled | `shell/DotField.tsx` |
 | Desktop store | External store via `useSyncExternalStore`; `AppInstance {id, appId, size, col, row, mode}`; commands return agent reply strings; localStorage persistence with validation + repack | `wm/desktopStore.tsx` |
-| Grid | 6×4 grid, 160px cells, 16px gap, fit-scale (min 0.3), packing as pure functions | `wm/layout.ts`, `shell/WidgetGrid.tsx` |
+| Grid | 6×4 grid, 160px design cells that stretch up to 1.5× per axis to fill the window (`fitGrid`), 16px gap, fit-scale (0.3–1.35), packing as pure functions | `wm/layout.ts`, `shell/WidgetGrid.tsx` |
 | Instance rendering | Each app renders **once** into a stable detached `<div>`; grid slot / fullscreen / keepalive containers claim it via ref callbacks; spring-FLIP flights between them; focus restoration | `shell/InstanceHost.tsx`, `shell/hostNodes.ts` |
 | ASCII motion | `AsciiFrame`: border draws corner-to-corner → content types in line-by-line → settles to a clean card border; exit reverses from the current timeline; move-flicker on cell change | `ui/AsciiFrame.tsx` |
 | Motion engine | Spring physics (damping + response), interruptible, retargetable, writes straight to the DOM; `project()` for flings, `rubberband()` for edges | `ui/motion/spring.ts` |

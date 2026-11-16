@@ -1,4 +1,4 @@
-/* Clock widget. Uses the shell's colour tokens, with fallbacks so it also renders standalone. */
+/* Clock widget. Tokens only — reads the shell's semantic colours, so both themes come for free. */
 
 .nexus-clock {
   flex: 1;
@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  color: var(--nexus-text, #c5c6c7);
+  color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
 
@@ -28,7 +28,7 @@
   line-height: 1;
   letter-spacing: -0.02em;
   white-space: nowrap;
-  color: var(--nexus-accent, #66fcf1);
+  color: var(--accent);
 }
 
 .nexus-clock-period {
@@ -36,7 +36,7 @@
   font-size: 0.4em;
   font-weight: 400;
   letter-spacing: 0.05em;
-  color: var(--nexus-text, #c5c6c7);
+  color: var(--ink);
 }
 
 .nexus-clock-date {
@@ -60,13 +60,13 @@
 }
 
 .nexus-clock-dial {
-  fill: var(--nexus-bg, #0b0c10);
-  stroke: var(--line, #45a29e);
+  fill: var(--surface);
+  stroke: var(--line);
   stroke-width: 1.5;
 }
 
 .nexus-clock-tick {
-  stroke: var(--nexus-text, #c5c6c7);
+  stroke: var(--ink);
   stroke-width: 1;
   stroke-linecap: round;
   opacity: 0.5;
@@ -79,16 +79,16 @@
 
 .nexus-clock-hand {
   stroke-linecap: round;
-  stroke: var(--nexus-text, #c5c6c7);
+  stroke: var(--ink);
 }
 
 .nexus-clock-hand--hour { stroke-width: 3.5; }
 .nexus-clock-hand--minute { stroke-width: 2.5; }
 .nexus-clock-hand--second {
   stroke-width: 1;
-  stroke: var(--nexus-accent, #66fcf1);
+  stroke: var(--accent);
 }
 
 .nexus-clock-pin {
-  fill: var(--nexus-accent, #66fcf1);
+  fill: var(--accent);
 }

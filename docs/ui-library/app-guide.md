@@ -125,9 +125,12 @@ Field effects, so you choose deliberately:
 
 ## 4. Designing for sizes
 
-Grid cells are 160px with 16px gaps (`wm/layout.ts`), so your actual pixel boxes are:
+Grid cells have a 160px design box with 16px gaps (`wm/layout.ts`). These are your
+**minimum** pixel boxes. On wide, tall or large windows the grid stretches its cells
+(`fitGrid`, up to 1.5× per axis) to fill the screen, so a `1x1` may be 240×160 and
+a `2x2` may not be square:
 
-| Size | Pixels | Typical content |
+| Size | Minimum pixels | Typical content |
 |---|---|---|
 | `1x1` | 160×160 | One number, one control, compact meter |
 | `2x1` | 336×160 | Wide data: timers, meters, lists, mini tables |
@@ -141,9 +144,11 @@ Two accepted approaches — pick one per app:
 2. **Measure the container** with a `ResizeObserver` and pick density (clock also
    supports standalone use this way).
 
-Non-negotiable: **every size you list must look right**, including at the grid's
-fit-scale (the whole grid can be scaled down on small windows — never hardcode
-against raw viewport pixels; measure your own box).
+Non-negotiable: **every size you list must look right** from its minimum box up to
+1.5× wider or taller. Fill your box (`height: 100%`, flex) and centre fixed-shape
+content (dials, avatars) instead of pinning it to a corner. Small windows also zoom
+the whole grid down (fit-scale), so never hardcode against raw viewport pixels;
+measure your own box.
 
 The `WidgetTemplate` *(planned P1)* formalizes this with a `sizes → content`
 mapping, an empty state, and per-size density; until then, apply the mapping by hand
@@ -462,7 +467,7 @@ declared sizes.
 | Pitfall | Why it breaks things |
 |---|---|
 | Drawing your own card/frame/label | Double frames; breaks the ASCII build-in and both themes |
-| Hardcoding against `window.innerWidth` | The grid is fit-scaled; measure your own box instead |
+| Hardcoding against `window.innerWidth`, or assuming 160px cells | Cells stretch and the grid is fit-scaled; measure your own box instead |
 | Raw colors / second accent | Breaks light+dark and the One-Accent rule |
 | Using `.nx-glass` in a widget | Glass is chrome-only; glass-on-widget is forbidden |
 | Global `window` key listeners | Conflicts with desktop keys and overlays |

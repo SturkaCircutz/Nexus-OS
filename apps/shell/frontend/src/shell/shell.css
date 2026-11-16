@@ -62,7 +62,8 @@
     height 480ms var(--ease);
 }
 
-.nx-desktop[data-reduced] .nx-slot {
+.nx-desktop[data-reduced] .nx-slot,
+.nx-grid[data-resizing] .nx-slot {
   transition: none;
 }
 
